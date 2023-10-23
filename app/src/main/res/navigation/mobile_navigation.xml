@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/homepage">
+
+    <fragment
+        android:id="@+id/homepage"
+        android:name="ru.araok.presentation.homepage.HomePageFragment"
+        android:label="@string/home"
+        tools:layout="@layout/fragment_home_page">
+    </fragment>
+
+    <fragment
+        android:id="@+id/search"
+        android:name="ru.araok.presentation.search.SearchFragment"
+        android:label="@string/search"
+        tools:layout="@layout/fragment_search">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/vocabulary"
+        android:name="ru.araok.presentation.vocabulary.VocabularyFragment"
+        android:label="@string/vocabulary"
+        tools:layout="@layout/fragment_vocabulary">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/add_video"
+        android:name="ru.araok.presentation.videopage.VideoPageFragment"
+        android:label="@string/add_video"
+        tools:layout="@layout/fragment_video_page">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/profile"
+        android:name="ru.araok.presentation.profile.ProfileFragment"
+        android:label="@string/profile"
+        tools:layout="@layout/fragment_profile">
+
+    </fragment>
+
+</navigation>

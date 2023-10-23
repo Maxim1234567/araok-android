@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Araok</string>
+    <string name="home">Home</string>
+    <string name="search">Search</string>
+    <string name="vocabulary">Vocabulary</string>
+    <string name="add_video">Add Video</string>
+    <string name="profile">Profile</string>
+</resources>
