@@ -5,4 +5,13 @@
     <string name="vocabulary">Vocabulary</string>
     <string name="add_video">Add Video</string>
     <string name="profile">Profile</string>
+    <string name="select_media">Select Media</string>
+    <string name="select_preview">Select Preview</string>
+    <string name="select_text_subtitle_original">Select Text Subtitle Original</string>
+    <string name="select_text_subtitle_translate">Select Text Subtitle Translate</string>
+    <string name="song_name">Song name</string>
+    <string name="artist">Artist</string>
+    <string name="choose_file">Choose a file</string>
+    <string name="permission_granted">Permission granted!</string>
+    <string name="permission_denied">Permission denied!</string>
 </resources>
