@@ -190,10 +190,10 @@ public class FileUtils {
 
     public static List<SubtitleDto> fileToSubtitles(String filePath) {
         return List.of(
-                new SubtitleDto(1L, "line1", 1L, 2L),
-                new SubtitleDto(2L, "line2", 2L, 3L),
-                new SubtitleDto(3L, "line3", 3L, 4L),
-                new SubtitleDto(4L, "line4", 5L, 6L)
+                new SubtitleDto(null, "line1", 1L, 2L),
+                new SubtitleDto(null, "line2", 2L, 3L),
+                new SubtitleDto(null, "line3", 3L, 4L),
+                new SubtitleDto(null, "line4", 5L, 6L)
         );
     }
 

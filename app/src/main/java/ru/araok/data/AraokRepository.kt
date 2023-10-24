@@ -10,22 +10,9 @@ import ru.araok.entites.AgeLimit
 import javax.inject.Inject
 
 class AraokRepository @Inject constructor() {
-    suspend fun getAgeLimit(): List<AgeLimit> {
-        return RetrofitService.araokApi.getAgeLimit().body() ?: emptyList()
-    }
+    suspend fun getAgeLimit(): List<AgeLimit> =
+        RetrofitService.araokApi.getAgeLimit().body() ?: emptyList()
 
-    suspend fun contentSave(content: ContentWithContentMediaAndMediaSubtitleDto): String {
-        Log.d("AraokRepository", "contentSave")
-
-        val stringJson = Moshi.Builder()
-            .add(LocalDateAdapter())
-            .addLast(KotlinJsonAdapterFactory())
-            .build()
-            .adapter(ContentWithContentMediaAndMediaSubtitleDto::class.java)
-            .toJson(content)
-
-        Log.d("AraokRepository", "contentSave: $stringJson")
-
-        return RetrofitService.araokApi.contentSave(content).body() ?: "Not OK"
-    }
+    suspend fun contentSave(content: ContentWithContentMediaAndMediaSubtitleDto): String =
+        RetrofitService.araokApi.contentSave(content).body() ?: "Not OK"
 }
