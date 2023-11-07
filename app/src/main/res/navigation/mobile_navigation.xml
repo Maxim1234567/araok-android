@@ -45,4 +45,12 @@
 
     </fragment>
 
+    <fragment
+        android:id="@+id/language"
+        android:name="ru.araok.presentation.language.LanguageActivity"
+        android:label="@string/language"
+        tools:layout="@layout/activity_language">
+
+    </fragment>
+
 </navigation>

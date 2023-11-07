@@ -1,5 +1,6 @@
 package ru.araok.presentation
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -11,6 +12,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import ru.araok.R
 import ru.araok.databinding.ActivityMainBinding
+import ru.araok.presentation.language.LanguageActivity
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -27,6 +29,11 @@ class MainActivity : AppCompatActivity() {
 
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        binding.language.setOnClickListener {
+            val intent = Intent(this, LanguageActivity::class.java)
+            startActivity(intent)
+        }
 
         setBottomNavigation()
     }

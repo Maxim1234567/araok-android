@@ -6,7 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import ru.araok.R
+import ru.araok.consts.TypeContent
+import ru.araok.custom.RecyclerInfo
 import ru.araok.databinding.FragmentHomePageBinding
 import ru.araok.presentation.ViewModelFactory
 import javax.inject.Inject
@@ -20,8 +26,18 @@ class HomePageFragment : Fragment() {
     lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: HomePageViewModel by viewModels { viewModelFactory }
 
+    private val adapterAll = HomePageAdapter(::onClick)
+    private val adapterNew = HomePageAdapter(::onClick)
+    private val adapterPopular = HomePageAdapter(::onClick)
+    private val adapterRecommended = HomePageAdapter(::onClick)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
+
+        viewModel.loadAll(TypeContent.ALL)
+        viewModel.loadNew(TypeContent.NEW)
+        viewModel.loadPopular(TypeContent.POPULAR)
+        viewModel.loadRecommended(TypeContent.RECOMMENDED)
     }
 
     override fun onCreateView(
@@ -35,6 +51,63 @@ class HomePageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setSelectionLayout(
+            binding.allLayout,
+            R.string.all,
+            adapterAll
+        )
+
+        setSelectionLayout(
+            binding.newLayout,
+            R.string._new,
+            adapterNew
+        )
+
+        setSelectionLayout(
+            binding.popularLayout,
+            R.string.popular,
+            adapterPopular
+        )
+
+        setSelectionLayout(
+            binding.recommendedLayout,
+            R.string.recommended,
+            adapterRecommended
+        )
+
+        viewModel.all.onEach {
+            adapterAll.setData(it)
+            binding.allLayout.visibilityStateLoad(false)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.new.onEach {
+            adapterNew.setData(it)
+            binding.newLayout.visibilityStateLoad(false)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.popular.onEach {
+            adapterPopular.setData(it)
+            binding.popularLayout.visibilityStateLoad(false)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.recommended.onEach {
+            adapterRecommended.setData(it)
+            binding.recommendedLayout.visibilityStateLoad(false)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+    }
+
+    private fun setSelectionLayout(
+        recyclerInfo: RecyclerInfo,
+        shortDescription: Int,
+        adapter: HomePageAdapter
+    ) {
+        recyclerInfo.setRecyclerAdapter(adapter)
+        recyclerInfo.setShortDescription(resources.getString(shortDescription))
+    }
+
+    private fun onClick(id: Long) {
+
     }
 
     override fun onDestroyView() {

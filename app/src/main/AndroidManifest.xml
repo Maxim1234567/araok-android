@@ -28,6 +28,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".presentation.language.LanguageActivity"
+            android:exported="false"
+            android:label="LanguageActivity"/>
     </application>
 
 </manifest>
