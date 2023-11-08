@@ -58,5 +58,12 @@ object RetrofitService {
             @Path("contentId") contentId: Long,
             @Path("languageId") languageId: Long
         ): Response<MediaSubtitleDto>
+
+        //media
+        @GET("/api/media")
+        suspend fun getMedia(
+            @Path("contentId") contentId: Long,
+            @Path("typeId") typeId: Long
+        ): Response<List<Byte>>
     }
 }

@@ -32,4 +32,7 @@ class GetAraokUseCase @Inject constructor(
     //media subtitle
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun getSubtitle(contentId: Long, languageId: Long) = araokRepository.getSubtitle(contentId, languageId)
+
+    //media
+    suspend fun getMedia(contentId: Long, typeId: Long = 1) = araokRepository.getMedia(contentId, typeId)
 }

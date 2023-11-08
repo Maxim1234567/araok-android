@@ -11,6 +11,11 @@
         android:name="ru.araok.presentation.homepage.HomePageFragment"
         android:label="@string/home"
         tools:layout="@layout/fragment_home_page">
+
+        <action
+            android:id="@+id/homepage_to_video_page"
+            app:destination="@+id/video_page"/>
+
     </fragment>
 
     <fragment
@@ -18,6 +23,10 @@
         android:name="ru.araok.presentation.search.SearchFragment"
         android:label="@string/search"
         tools:layout="@layout/fragment_search">
+
+        <action
+            android:id="@+id/search_to_vide_page"
+            app:destination="@+id/video_page"/>
 
     </fragment>
 
@@ -31,9 +40,9 @@
 
     <fragment
         android:id="@+id/add_video"
-        android:name="ru.araok.presentation.videopage.VideoPageFragment"
+        android:name="ru.araok.presentation.addvideopage.VideoPageFragment"
         android:label="@string/add_video"
-        tools:layout="@layout/fragment_video_page">
+        tools:layout="@layout/fragment_add_video_page">
 
     </fragment>
 
@@ -50,6 +59,18 @@
         android:name="ru.araok.presentation.language.LanguageActivity"
         android:label="@string/language"
         tools:layout="@layout/activity_language">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/video_page"
+        android:name="ru.araok.presentation.videopage.VideoPageFragment"
+        android:label="VideoPage"
+        tools:layout="@layout/fragment_video_page">
+
+        <argument
+            android:name="contentId"
+            app:argType="long"/>
 
     </fragment>
 

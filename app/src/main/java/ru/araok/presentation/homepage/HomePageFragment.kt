@@ -1,12 +1,15 @@
 package ru.araok.presentation.homepage
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -15,6 +18,7 @@ import ru.araok.consts.TypeContent
 import ru.araok.custom.RecyclerInfo
 import ru.araok.databinding.FragmentHomePageBinding
 import ru.araok.presentation.ViewModelFactory
+import ru.araok.presentation.videopage.CONTENT_ID
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -107,7 +111,10 @@ class HomePageFragment : Fragment() {
     }
 
     private fun onClick(id: Long) {
+        Log.d("HomePageFragment", "CONTENT_ID: " + id)
 
+        val bundle = bundleOf(CONTENT_ID to id)
+        findNavController().navigate(R.id.homepage_to_video_page, bundle)
     }
 
     override fun onDestroyView() {

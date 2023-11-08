@@ -1,4 +1,4 @@
-package ru.araok.presentation.videopage;
+package ru.araok.presentation.addvideopage;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;

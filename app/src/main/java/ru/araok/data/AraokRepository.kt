@@ -40,6 +40,10 @@ class AraokRepository @Inject constructor() {
 
     //media subtitle
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun getSubtitle(contentId: Long, languageId: Long): MediaSubtitle =
+    suspend fun getSubtitle(contentId: Long, languageId: Long) =
         RetrofitService.araokApi.getSubtitle(contentId, languageId).body() ?: MediaSubtitleDto()
+
+    //media
+    suspend fun getMedia(contentId: Long, typeId: Long) =
+        RetrofitService.araokApi.getMedia(contentId, typeId).body() ?: emptyList()
 }
