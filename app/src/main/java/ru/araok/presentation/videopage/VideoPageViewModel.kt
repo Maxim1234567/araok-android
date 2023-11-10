@@ -25,6 +25,8 @@ class VideoPageViewModel @Inject constructor(
     fun loadVideo(contentId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             kotlin.runCatching {
+                Log.d("VideoPageViewModel", "contentId: $contentId")
+
                 getAraokUseCase.getMedia(contentId)
             }.fold(
                 onSuccess = { _video.value = it.toByteArray() },

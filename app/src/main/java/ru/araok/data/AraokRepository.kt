@@ -14,6 +14,7 @@ import ru.araok.entites.Content
 import ru.araok.entites.Language
 import ru.araok.entites.MediaSubtitle
 import javax.inject.Inject
+import kotlin.streams.toList
 
 class AraokRepository @Inject constructor() {
     //age limit
@@ -44,6 +45,10 @@ class AraokRepository @Inject constructor() {
         RetrofitService.araokApi.getSubtitle(contentId, languageId).body() ?: MediaSubtitleDto()
 
     //media
-    suspend fun getMedia(contentId: Long, typeId: Long) =
-        RetrofitService.araokApi.getMedia(contentId, typeId).body() ?: emptyList()
+    suspend fun getMedia(contentId: Long, typeId: Long): List<Byte> {
+        Log.d("AraokRepository", "contentId: $contentId, typeId: $typeId");
+
+        val response = RetrofitService.araokApi.getMedia(contentId, typeId)
+        return response.bytes().asList()
+    }
 }

@@ -3,10 +3,12 @@ package ru.araok.data
 import retrofit2.Retrofit
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -23,7 +25,7 @@ object RetrofitService {
     private val retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(
-            MoshiConverterFactory.create(adapter)
+            MoshiConverterFactory.create(adapter).asLenient()
         ).build()
 
     val araokApi: AraokApi = retrofit.create(
@@ -60,10 +62,11 @@ object RetrofitService {
         ): Response<MediaSubtitleDto>
 
         //media
-        @GET("/api/media")
+        @GET("/api/media/{contentId}/{typeId}")
+        @Headers("Content-Type: application/octet-stream")
         suspend fun getMedia(
             @Path("contentId") contentId: Long,
             @Path("typeId") typeId: Long
-        ): Response<List<Byte>>
+        ): ResponseBody
     }
 }

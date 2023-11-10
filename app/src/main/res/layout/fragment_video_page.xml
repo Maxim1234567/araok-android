@@ -64,6 +64,10 @@
         tools:text="Look, I was gonna go easy on you not to hurt your feelings\nBut I'm only going to get this one chance\nSomething's wrong, I can feel it"
         />
 
+<!--    <NumberPicker-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_width="wrap_content"/>-->
+
     <ImageView
         android:id="@+id/mark"
         android:layout_width="60dp"
@@ -88,5 +92,41 @@
         app:layout_constraintTop_toBottomOf="@+id/delete"
         app:layout_constraintRight_toRightOf="parent"
         android:src="@drawable/start"/>
+
+    <ImageView
+        android:id="@+id/play"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@+id/videoView"
+        app:layout_constraintLeft_toLeftOf="@+id/videoView"
+        app:layout_constraintRight_toRightOf="@+id/videoView"
+        app:layout_constraintBottom_toBottomOf="@+id/videoView"
+        android:src="@drawable/play_pause" />
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="@+id/videoView"
+        app:layout_constraintRight_toLeftOf="@+id/trackLength"
+        app:layout_constraintBottom_toBottomOf="@+id/videoView"
+        app:layout_constraintHorizontal_weight="8"/>
+
+    <TextView
+        android:id="@+id/trackLength"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintLeft_toRightOf="@+id/seekBar"
+        app:layout_constraintBottom_toBottomOf="@+id/videoView"
+        app:layout_constraintRight_toRightOf="@+id/videoView"
+        app:layout_constraintHorizontal_weight="2"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:text="00:00"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
