@@ -6,6 +6,7 @@ import ru.araok.presentation.homepage.HomePageViewModel
 import ru.araok.presentation.language.LanguageViewModel
 import ru.araok.presentation.search.SearchViewModel
 import ru.araok.presentation.addvideopage.AddVideoPageViewModel
+import ru.araok.presentation.markpage.MarkPageViewModel
 import ru.araok.presentation.videopage.VideoPageViewModel
 import javax.inject.Inject
 
@@ -14,7 +15,8 @@ class ViewModelFactory @Inject constructor(
     private val homePageViewModel: HomePageViewModel,
     private val searchViewModel: SearchViewModel,
     private val languageViewModel: LanguageViewModel,
-    private val videoPageViewModel: VideoPageViewModel
+    private val videoPageViewModel: VideoPageViewModel,
+    private val markPageViewModel: MarkPageViewModel
 ): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if(modelClass.isAssignableFrom(AddVideoPageViewModel::class.java)) {
@@ -27,6 +29,8 @@ class ViewModelFactory @Inject constructor(
             return languageViewModel as T
         } else if(modelClass.isAssignableFrom(VideoPageViewModel::class.java)) {
             return videoPageViewModel as T
+        } else if(modelClass.isAssignableFrom(MarkPageViewModel::class.java)) {
+            return markPageViewModel as T
         }
 
         throw IllegalArgumentException("Unknown class name")

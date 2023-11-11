@@ -21,4 +21,7 @@
     <string name="content_name">Content Name</string>
     <string name="hint_name">Name Song</string>
     <string name="language">Language</string>
+    <string name="prefix_to">To</string>
+    <string name="prefix_from">From</string>
+    <string name="add_new_mark">Add new mark</string>
 </resources>

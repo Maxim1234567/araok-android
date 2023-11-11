@@ -72,6 +72,18 @@
             android:name="contentId"
             app:argType="long"/>
 
+        <action
+            android:id="@+id/video_page_to_mark_page"
+            app:destination="@+id/mark_page"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/mark_page"
+        android:name="ru.araok.presentation.markpage.MarkPageFragment"
+        android:label="Marks"
+        tools:layout="@layout/fragment_mark_page">
+
     </fragment>
 
 </navigation>
