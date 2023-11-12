@@ -18,6 +18,16 @@
         app:layout_constraintTop_toTopOf="@+id/newMark"
         app:layout_constraintBottom_toBottomOf="@+id/newMark"/>
 
+    <Button
+        android:id="@+id/save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@+id/newMark"
+        app:layout_constraintLeft_toRightOf="@+id/header"
+        app:layout_constraintRight_toLeftOf="@+id/newMark"
+        app:layout_constraintBottom_toBottomOf="@+id/newMark"
+        android:text="@string/save"/>
+
     <ImageView
         android:id="@+id/newMark"
         android:layout_width="60dp"

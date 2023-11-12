@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -18,7 +17,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.araok.R
 import ru.araok.data.dto.MarkDto
-import ru.araok.data.dto.PlayerSettingsDto
+import ru.araok.data.dto.SettingsDto
 import ru.araok.databinding.FragmentVideoPageBinding
 import ru.araok.presentation.ViewModelFactory
 import java.io.File
@@ -101,7 +100,7 @@ class VideoPageFragment: Fragment() {
                 delay = 5
             )
 
-            val playerSetting = PlayerSettingsDto(
+            val playerSetting = SettingsDto(
                 marks = listOf(mark1, mark2, mark3, mark4)
             )
 

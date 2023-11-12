@@ -23,5 +23,8 @@
     <string name="language">Language</string>
     <string name="prefix_to">To</string>
     <string name="prefix_from">From</string>
+    <string name="prefix_repeat">Rpt</string>
+    <string name="prefix_delay">Dl</string>
     <string name="add_new_mark">Add new mark</string>
+    <string name="save">Save</string>
 </resources>

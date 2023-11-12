@@ -1,5 +1,6 @@
 package ru.araok
 
+import android.util.Log
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
 
@@ -17,8 +18,17 @@ import org.junit.Assert.*
 class ExampleInstrumentedTest {
     @Test
     fun useAppContext() {
-        // Context of the app under test.
-        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("edu.araok", appContext.packageName)
+        val timer = "02:34"
+        val millseconds = 2 * 60 * 1000 + 34 * 1000
+
+        Log.d("", "millseconds: $millseconds")
+        Log.d("", "timerToMilliSeconds: ${timerToMilliSeconds(timer)}")
     }
+}
+
+fun timerToMilliSeconds(timer: String): Int {
+    val minutes = timer.split(":")[0].toInt()
+    val seconds = timer.split(":")[1].toInt()
+
+    return minutes * 60 * 1000 + seconds * 1000
 }

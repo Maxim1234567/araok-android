@@ -1,5 +1,5 @@
 package ru.araok.data.dto
 
-data class PlayerSettingsDto(
+data class SettingsDto(
     val marks: List<MarkDto>
 )

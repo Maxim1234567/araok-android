@@ -12,7 +12,7 @@ import android.widget.SeekBar
 import androidx.constraintlayout.widget.ConstraintLayout
 import kotlinx.coroutines.*
 import ru.araok.data.dto.MarkDto
-import ru.araok.data.dto.PlayerSettingsDto
+import ru.araok.data.dto.SettingsDto
 import ru.araok.databinding.VideoPlayerLayoutBinding
 import ru.araok.milliSecondsToTimer
 
@@ -30,7 +30,7 @@ class VideoPlayer
     private var delayJob: Job? = null
 
     private var isMarkPlay = false
-    private var settings: PlayerSettingsDto? = null
+    private var settings: SettingsDto? = null
     private var currentMarkPosition = -1
     private var mediaPlayer: MediaPlayer? = null
     private var timer: CountDownTimer? = null
@@ -254,7 +254,7 @@ class VideoPlayer
         playSetting = startCoroutineSettings()
     }
 
-    fun setSettings(settings: PlayerSettingsDto) {
+    fun setSettings(settings: SettingsDto) {
         this.settings = settings
     }
 }
