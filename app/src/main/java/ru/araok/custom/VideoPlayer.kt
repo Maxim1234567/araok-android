@@ -36,6 +36,9 @@ class VideoPlayer
     private var timer: CountDownTimer? = null
     private var changeSeekBar = false
 
+    lateinit var pathVideo: Uri
+    private set
+
     private val binding = VideoPlayerLayoutBinding.inflate(LayoutInflater.from(context))
 
     private val timerTrackLength: CountDownTimer = object: CountDownTimer(Long.MAX_VALUE, 1000) {
@@ -114,6 +117,7 @@ class VideoPlayer
     }
 
     fun setVideoPath(path: Uri) {
+        pathVideo = path
         binding.videoView.setVideoURI(path)
     }
 
@@ -181,14 +185,14 @@ class VideoPlayer
     private fun startMark(mark: MarkDto) = scope.launch(start = CoroutineStart.LAZY, context = Dispatchers.IO) {
         isMarkPlay = true
 
-        repeat(mark.repeat) {
-            binding.videoView.seekTo(mark.start)
+        repeat(mark.repeat!!) {
+            binding.videoView.seekTo(mark.start!!)
 
             if(!binding.videoView.isPlaying)
                 binding.videoView.start()
 
             Log.d("VideoPlayer", "currentPosition start: ${binding.videoView.currentPosition}")
-            val segmentLen = (mark.end - mark.start).toLong()
+            val segmentLen = (mark.end!! - mark.start).toLong()
             Log.d("VideoPlayer", "delay: ${segmentLen}")
 
             delayJob = delay(mark.end)
@@ -199,7 +203,7 @@ class VideoPlayer
 
             if(mark.delay != 0) {
                 binding.videoView.pause()
-                delay(timeMillis = mark.delay * 1000L)
+                delay(timeMillis = mark.delay!! * 1000L)
                 binding.videoView.start()
             }
         }

@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -20,6 +21,7 @@ import ru.araok.data.dto.MarkDto
 import ru.araok.data.dto.SettingsDto
 import ru.araok.databinding.FragmentVideoPageBinding
 import ru.araok.presentation.ViewModelFactory
+import ru.araok.presentation.markpage.PATH_VIDEO
 import java.io.File
 import javax.inject.Inject
 
@@ -109,7 +111,11 @@ class VideoPageFragment: Fragment() {
         }
 
         binding.mark.setOnClickListener {
-            findNavController().navigate(R.id.video_page_to_mark_page)
+            val bundle = bundleOf(
+                CONTENT_ID to contentId,
+                PATH_VIDEO to binding.videoPlayer.pathVideo.path
+            )
+            findNavController().navigate(R.id.video_page_to_mark_page, bundle)
         }
     }
 

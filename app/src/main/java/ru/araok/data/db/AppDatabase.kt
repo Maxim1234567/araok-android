@@ -1,10 +1,16 @@
 package ru.araok.data.db
 
 import androidx.room.Database
+import androidx.room.RoomDatabase
 
 @Database(
-    entities = [],
+    entities = [
+        MarkDb::class,
+        SettingsDb::class,
+        SettingsMarksDb::class
+    ],
     version = 1
 )
-class AppDatabase {
+abstract class AppDatabase: RoomDatabase() {
+    abstract fun settingsDao(): SettingsDao
 }

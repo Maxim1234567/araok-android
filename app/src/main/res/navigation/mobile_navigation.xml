@@ -84,6 +84,14 @@
         android:label="Marks"
         tools:layout="@layout/fragment_mark_page">
 
+        <argument
+            android:name="contentId"
+            app:argType="long"/>
+
+        <argument
+            android:name="pathVideo"
+            app:argType="string"/>
+
     </fragment>
 
 </navigation>

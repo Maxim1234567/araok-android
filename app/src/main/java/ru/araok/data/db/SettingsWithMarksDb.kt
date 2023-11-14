@@ -1,21 +1,21 @@
 package ru.araok.data.db
 
+import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
-import ru.araok.entites.Mark
-import ru.araok.entites.Settings
 import ru.araok.entites.SettingsWithMarks
 
 data class SettingsWithMarksDb(
-    override val settingDb: Settings = SettingsDb(),
+    @Embedded
+    override val settingDb: SettingsDb = SettingsDb(),
     @Relation(
         parentColumn = "id",
         entityColumn = "id",
         associateBy = Junction(
-            MarkDb::class,
+            SettingsMarksDb::class,
             parentColumn = "setting_id",
             entityColumn = "mark_id"
         )
     )
-    override val marksDb: List<Mark> = emptyList()
+    override val marksDb: List<MarkDb> = emptyList()
 ): SettingsWithMarks
