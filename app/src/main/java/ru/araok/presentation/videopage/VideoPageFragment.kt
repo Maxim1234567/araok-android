@@ -70,6 +70,7 @@ class VideoPageFragment: Fragment() {
 
                 binding.videoPlayer.setVideoPath(Uri.fromFile(file))
                 binding.videoPlayer.play()
+                binding.progressBar.visibility = View.GONE
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 

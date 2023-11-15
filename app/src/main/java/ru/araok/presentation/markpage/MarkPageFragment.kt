@@ -3,6 +3,7 @@ package ru.araok.presentation.markpage
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
+import android.text.InputFilter
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.araok.R
+import ru.araok.custom.MaskWatcher
 import ru.araok.data.db.MarkDb
 import ru.araok.data.db.SettingsDb
 import ru.araok.data.db.SettingsWithMarksDb
@@ -142,11 +144,12 @@ class MarkPageFragment: Fragment() {
         val textViewPrefixFrom = createTextView(resources.getString(R.string.prefix_from))
         val textViewPrefixRepeat = createTextView(resources.getString(R.string.prefix_repeat))
         val textViewPrefixDelay = createTextView(resources.getString(R.string.prefix_delay))
-        val editTextTo = createEditText(milliSecondsToTimer(start))
-        val editTextFrom = createEditText(milliSecondsToTimer(end))
-        val editTextRepeat = createEditText(repeat)
-        val editTextDelay = createEditText(delay)
-        val imageView = createImageView(R.drawable.mark_delete)
+        val editTextTo = createEditTextRange(milliSecondsToTimer(start))
+        val editTextFrom = createEditTextRange(milliSecondsToTimer(end))
+        val editTextRepeat = createEditTextNumber(repeat)
+        val editTextDelay = createEditTextNumber(delay)
+        val delete = createImageView(R.drawable.mark_delete)
+        val play = createImageView(R.drawable.play)
         val linearLayout = linearLayout()
 
         linearLayout.tag = UUID.randomUUID().toString()
@@ -161,17 +164,24 @@ class MarkPageFragment: Fragment() {
         linearLayout.addView(editTextRepeat)
         linearLayout.addView(textViewPrefixDelay)
         linearLayout.addView(editTextDelay)
-        linearLayout.addView(imageView)
+        linearLayout.addView(delete)
+        linearLayout.addView(play)
 
         binding.llNewMarks.addView(linearLayout)
 
-        imageView.tag = binding.llNewMarks.childCount
-        imageView.setOnClickListener {
+        delete.tag = binding.llNewMarks.childCount
+        delete.setOnClickListener {
             val view = binding.llNewMarks.children.asStream().filter { v -> v.tag == linearLayout.tag }.findFirst()
 
             if(view.isPresent) {
                 binding.llNewMarks.removeView(view.get())
             }
+        }
+
+        play.setOnClickListener {
+            val view = getLayoutByUuid(linearLayout.tag as String)
+            val mark = layoutToMarkDto(view)
+            binding.videoPlayer.playRange(mark)
         }
     }
 
@@ -196,10 +206,21 @@ class MarkPageFragment: Fragment() {
 
         return textView
     }
-    private fun createEditText(value: String): EditText {
+    private fun createEditTextRange(value: String): EditText {
         val editText = EditText(context)
         editText.layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f)
         editText.setText(value)
+        editText.filters = arrayOf(numberFilter(), InputFilter.LengthFilter(5))
+        editText.addTextChangedListener(MaskWatcher("##:##"))
+
+        return editText
+    }
+
+    private fun createEditTextNumber(value: String): EditText {
+        val editText = EditText(context)
+        editText.layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f)
+        editText.setText(value)
+        editText.filters = arrayOf(numberFilter())
 
         return editText
     }
@@ -218,24 +239,44 @@ class MarkPageFragment: Fragment() {
         val marks = ArrayList<MarkDto>()
 
         binding.llNewMarks.children.forEachIndexed { index, view ->
-            val linearLayout = view as LinearLayout
-            val editTextTo = linearLayout.getChildAt(1) as EditText
-            val editTextFrom = linearLayout.getChildAt(3) as EditText
-            val editTextRepeat = linearLayout.getChildAt(5) as EditText
-            val editTextDelay = linearLayout.getChildAt(7) as EditText
-
-            val mark = MarkDto(
-                id = id,
-                start = timerToMilliSeconds(editTextTo.text.toString()),
-                end = timerToMilliSeconds(editTextFrom.text.toString()),
-                repeat = editTextRepeat.text.toString().toInt(),
-                delay = editTextDelay.text.toString().toInt()
-            )
-
-            marks.add(mark)
+            marks.add(layoutToMarkDto(view))
         }
 
         return SettingsDto(marks)
+    }
+
+    private fun getLayoutByUuid(uuid: String) =
+        binding.llNewMarks.children.asStream()
+            .filter { v -> v.tag == uuid }
+            .findFirst()
+            .orElse(LinearLayout(context))
+
+    private fun layoutToMarkDto(view: View): MarkDto {
+        val linearLayout = view as LinearLayout
+        val editTextTo = linearLayout.getChildAt(1) as EditText
+        val editTextFrom = linearLayout.getChildAt(3) as EditText
+        val editTextRepeat = linearLayout.getChildAt(5) as EditText
+        val editTextDelay = linearLayout.getChildAt(7) as EditText
+
+        return MarkDto(
+            id = id,
+            start = timerToMilliSeconds(editTextTo.text.toString()),
+            end = timerToMilliSeconds(editTextFrom.text.toString()),
+            repeat = editTextRepeat.text.toString().toInt(),
+            delay = editTextDelay.text.toString().toInt()
+        )
+    }
+
+    private fun numberFilter(): InputFilter {
+        return InputFilter { source, start, end, dest, dstart, dend ->
+            if(source.isEmpty())
+                return@InputFilter ""
+
+            if(Character.isDigit(source[0]))
+                return@InputFilter source
+
+            null
+        }
     }
 
     override fun onDestroyView() {

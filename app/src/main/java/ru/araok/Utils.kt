@@ -19,7 +19,7 @@ fun milliSecondsToTimer(milliseconds: Int): String {
         "$seconds"
     }
 
-    return minutesString + ":" + secondsString
+    return "$minutesString:$secondsString"
 }
 
 fun timerToMilliSeconds(timer: String): Int {
