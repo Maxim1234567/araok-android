@@ -19,4 +19,6 @@ class GetAraokDbUseCase @Inject constructor(
     }
 
     fun getSettingsWithMarks(contentId: Int) = settingsDbRepository.getSettingsWithMarks(contentId)
+
+    suspend fun loadSettingsWithMarks(contentId: Int) = settingsDbRepository.loadSettingsWithMarks(contentId)
 }

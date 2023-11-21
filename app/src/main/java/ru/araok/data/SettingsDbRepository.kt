@@ -29,4 +29,6 @@ class SettingsDbRepository @Inject constructor(
     }
 
     fun getSettingsWithMarks(contentId: Int) = settingsDao.getSettingsWithMarks(contentId)
+
+    suspend fun loadSettingsWithMarks(contentId: Int) = settingsDao.loadSettingsWithMarks(contentId)
 }

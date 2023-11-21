@@ -39,6 +39,9 @@ class AraokRepository @Inject constructor() {
     suspend fun getAllLanguages(): List<Language> =
         RetrofitService.araokApi.getAllLanguages().body() ?: emptyList()
 
+    suspend fun getAllLanguageSubtitle(contentId: Long) =
+        RetrofitService.araokApi.getAllLanguageSubtitle(contentId).body() ?: emptyList()
+
     //media subtitle
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun getSubtitle(contentId: Long, languageId: Long) =

@@ -61,6 +61,11 @@ object RetrofitService {
             @Path("languageId") languageId: Long
         ): Response<MediaSubtitleDto>
 
+        @GET("/api/subtitle/{contentId}")
+        suspend fun getAllLanguageSubtitle(
+            @Path("contentId") contentId: Long
+        ): Response<List<LanguageDto>>
+
         //media
         @GET("/api/media/{contentId}/{typeId}")
         @Headers("Content-Type: application/octet-stream")

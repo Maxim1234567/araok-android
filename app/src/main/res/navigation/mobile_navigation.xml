@@ -76,6 +76,10 @@
             android:id="@+id/video_page_to_mark_page"
             app:destination="@+id/mark_page"/>
 
+        <action
+            android:id="@+id/video_page_to_subtitle_dialog"
+            app:destination="@+id/subtitle_dialog"/>
+
     </fragment>
 
     <fragment
@@ -93,5 +97,16 @@
             app:argType="string"/>
 
     </fragment>
+
+    <dialog
+        android:id="@+id/subtitle_dialog"
+        android:name="ru.araok.presentation.subtitle.SubtitleDialogFragment"
+        tools:layout="@layout/fragment_dialog_subtitle">
+
+        <argument
+            android:name="contentId"
+            app:argType="long"/>
+
+    </dialog>
 
 </navigation>

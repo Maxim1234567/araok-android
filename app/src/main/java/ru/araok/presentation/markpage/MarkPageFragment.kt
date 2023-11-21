@@ -119,9 +119,9 @@ class MarkPageFragment: Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.settings
-                .collect {
+                .collect { it ->
                     if(viewModel.updateView) {
-                        it?.marksDb?.forEach {
+                        it.marksDb.forEach {
                             createNewMark(
                                 start = it.start!!,
                                 end = it.end!!,
@@ -281,6 +281,7 @@ class MarkPageFragment: Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.videoPlayer.stop()
         _binding = null
     }
 

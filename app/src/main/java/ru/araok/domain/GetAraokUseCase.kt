@@ -29,6 +29,8 @@ class GetAraokUseCase @Inject constructor(
     //language
     suspend fun gtAllLanguages() = araokRepository.getAllLanguages()
 
+    suspend fun getAllLanguageSubtitle(contentId: Long) = araokRepository.getAllLanguageSubtitle(contentId)
+
     //media subtitle
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun getSubtitle(contentId: Long, languageId: Long) = araokRepository.getSubtitle(contentId, languageId)

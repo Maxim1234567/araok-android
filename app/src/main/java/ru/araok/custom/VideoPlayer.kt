@@ -14,6 +14,7 @@ import kotlinx.coroutines.*
 import ru.araok.data.dto.MarkDto
 import ru.araok.data.dto.SettingsDto
 import ru.araok.databinding.VideoPlayerLayoutBinding
+import ru.araok.entites.Subtitle
 import ru.araok.milliSecondsToTimer
 
 class VideoPlayer
@@ -22,12 +23,15 @@ class VideoPlayer
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ): ConstraintLayout(context, attrs, defStyleAttr) {
+    private var updateUI: ((Int) -> Unit)? = null
+
     private val job = SupervisorJob()
     private val scope = CoroutineScope(Dispatchers.Default + job)
 
     private var playSetting: Job = startCoroutineSettings()
     private var markJob: Job? = null
     private var delayJob: Job? = null
+    private var subtitleJob: Job? = null
 
     private var isMarkPlay = false
     private var settings: SettingsDto? = null
@@ -35,6 +39,8 @@ class VideoPlayer
     private var mediaPlayer: MediaPlayer? = null
     private var timer: CountDownTimer? = null
     private var changeSeekBar = false
+
+    private var subtitles: List<Subtitle>? = null
 
     lateinit var pathVideo: Uri
     private set
@@ -144,6 +150,22 @@ class VideoPlayer
         }
     }
 
+    private fun startCoroutineSubtitle() = scope.launch(start = CoroutineStart.LAZY, context = Dispatchers.IO) {
+        var sendIndex = -1
+
+        while (isActive) {
+            subtitles?.forEachIndexed { index, subtitle ->
+                if (subtitle.to <= binding.videoView.currentPosition && binding.videoView.currentPosition <= subtitle.from) {
+                    if(sendIndex != index) {
+                        Log.d("VideoPageFragment", "sendIndex: $sendIndex")
+                        sendIndex = index
+                        updateUI?.invoke(index)
+                    }
+                }
+            }
+        }
+    }
+
     fun nextMarkAndStart() {
         Log.d("VideoPlayer", "currentMarkPosition: $currentMarkPosition")
         delayJob?.cancel()
@@ -245,7 +267,23 @@ class VideoPlayer
         playSetting.start()
     }
 
+    fun setSubtitleAndStart(subtitles: List<Subtitle>, updateUI: (Int) -> Unit) {
+        this.subtitles = subtitles
+        this.updateUI = updateUI
+        subtitleJob = startCoroutineSubtitle()
+        subtitleJob?.start()
+        binding.videoView.pause()
+        binding.videoView.seekTo(0)
+        binding.videoView.start()
+    }
+
+    fun seekToSubtitleByIndex(index: Int) {
+        Log.d("VideoPageFragment", "seekToSubtitleByIndex: $index")
+        binding.videoView.seekTo(subtitles?.get(index)?.to?.toInt()!!)
+    }
+
     fun stop() {
+        subtitleJob?.cancel()
         markJob?.cancel()
         playSetting.cancel()
         timer?.cancel()

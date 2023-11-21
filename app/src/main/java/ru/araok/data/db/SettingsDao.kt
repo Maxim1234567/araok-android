@@ -17,6 +17,9 @@ interface SettingsDao {
     @Query("select * from setting s where s.content_id = :contentId")
     fun getSettingsWithMarks(contentId: Int): Flow<SettingsWithMarksDb>
 
+    @Query("select * from setting s where s.content_id = :contentId")
+    suspend fun loadSettingsWithMarks(contentId: Int): SettingsWithMarksDb
+
     @Query("select id from setting s where s.content_id = :contentId")
     fun getSettingsId(contentId: Int): Int
 
@@ -31,13 +34,4 @@ interface SettingsDao {
 
     @Query("delete from setting where id = :settingId")
     fun deleteSettings(settingId: Int)
-
-//    @Delete
-//    suspend fun deleteSettings(settingsDb: SettingsDb)
-//
-//    @Delete
-//    suspend fun deleteMark(markDb: MarkDb)
-//
-//    @Delete
-//    suspend fun deleteSettingsMarks(settingsMarksDb: SettingsMarksDb)
 }

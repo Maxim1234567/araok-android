@@ -2,17 +2,21 @@ package ru.araok.presentation.videopage
 
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -24,6 +28,7 @@ import ru.araok.presentation.ViewModelFactory
 import ru.araok.presentation.markpage.PATH_VIDEO
 import java.io.File
 import javax.inject.Inject
+import kotlin.streams.toList
 
 const val CONTENT_ID = "contentId"
 
@@ -36,7 +41,14 @@ class VideoPageFragment: Fragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    private val viewModel: VideoPageViewModel by viewModels { viewModelFactory }
+    private val viewModel: VideoPageViewModel by activityViewModels { viewModelFactory }
+
+    private var mShouldScroll = false
+    private var mToPosition = 0
+
+    private var touchRecyclerView = false
+
+    private val adapter = SubtitleAdapter()
 
     private val contentId: Long by lazy {
         arguments?.getLong(CONTENT_ID) ?: 0
@@ -53,12 +65,36 @@ class VideoPageFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentVideoPageBinding.inflate(inflater, container, false)
-
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.subtitle.adapter = adapter
+
+        binding.subtitle.setOnTouchListener { _, _ ->
+            touchRecyclerView = true
+            false
+        }
+
+        binding.subtitle.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+
+                if (mShouldScroll) {
+                    mShouldScroll = false
+                    smoothMoveToPosition(recyclerView, mToPosition)
+                }
+
+                if(newState == RecyclerView.SCROLL_STATE_IDLE && touchRecyclerView) {
+                    val linearLayout = binding.subtitle.layoutManager as LinearLayoutManager
+                    binding.videoPlayer.seekToSubtitleByIndex(linearLayout.findLastVisibleItemPosition())
+                    touchRecyclerView = false
+                }
+            }
+        })
 
         viewModel.video.onEach {
             if(it.isNotEmpty()) {
@@ -74,49 +110,103 @@ class VideoPageFragment: Fragment() {
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
+        viewModel.subtitle.onEach {
+            Log.d("VideoPageFragment", "subtitle size: ${it.size}")
+
+            adapter.setData(it)
+            binding.videoPlayer.setSubtitleAndStart(it, ::updateSubtitleUI)
+
+            if(it.isNotEmpty()) {
+                binding.progressBar.visibility = View.GONE
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.settingsDb.onEach {
+            if(it.settingDb.id != -1 && it.settingDb.contentId != -1) {
+                if(it.marksDb.isNotEmpty()) {
+                    binding.videoPlayer.setSettings(
+                        SettingsDto(
+                            marks = it.marksDb.stream().map {
+                                MarkDto(
+                                    id = it.id,
+                                    start = it.start,
+                                    end = it.end,
+                                    repeat = it.repeat,
+                                    delay = it.delay
+                                )
+                            }.toList()
+                        )
+                    )
+                    binding.videoPlayer.startSettings()
+                } else {
+
+                }
+            }
+        }
+
+        viewModel.languageFlow.onEach {
+            Log.d("VideoPageFragment", "languageId: $it")
+
+            if(it != -1) {
+                viewModel.sendLanguageId(-1)
+                viewModel.loadSubtitle(contentId, it.toLong())
+                binding.progressBar.visibility = View.VISIBLE
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
         binding.start.setOnClickListener {
-            val mark1 = MarkDto(
-                start = 5000,
-                end = 8000,
-                repeat = 3,
-                delay = 2
-            )
 
-            val mark2 = MarkDto(
-                start = 10000,
-                end = 17000,
-                repeat = 2,
-                delay = 1
-            )
-
-            val mark3 = MarkDto(
-                start = 15000,
-                end = 23000,
-                repeat = 4,
-                delay = 3
-            )
-
-            val mark4 = MarkDto(
-                start = 60000,
-                end = 65000,
-                repeat = 1,
-                delay = 5
-            )
-
-            val playerSetting = SettingsDto(
-                marks = listOf(mark1, mark2, mark3, mark4)
-            )
-
-            binding.videoPlayer.setSettings(playerSetting)
-            binding.videoPlayer.startSettings()
         }
 
         binding.mark.setOnClickListener {
+            binding.videoPlayer.stop()
+
             val bundle = bundleOf(
                 CONTENT_ID to contentId,
                 PATH_VIDEO to binding.videoPlayer.pathVideo.path
             )
             findNavController().navigate(R.id.video_page_to_mark_page, bundle)
+        }
+
+        binding.subtitleDownload.setOnClickListener {
+            val bundle = bundleOf(
+                CONTENT_ID to contentId
+            )
+            findNavController().navigate(R.id.video_page_to_subtitle_dialog, bundle)
+        }
+    }
+
+    private fun updateSubtitleUI(index: Int) {
+        Log.d("VideoPageFragment", "index: $index")
+        if(!touchRecyclerView) {
+            smoothMoveToPosition(binding.subtitle, index)
+        }
+    }
+
+    private fun smoothMoveToPosition(recyclerView: RecyclerView, position: Int) {
+        val firstItem = recyclerView.getChildLayoutPosition(recyclerView.getChildAt(0));
+        // Последняя видимая позиция
+        val lastItem =
+            recyclerView.getChildLayoutPosition(recyclerView.getChildAt(recyclerView.childCount - 1));
+
+        if (position < firstItem) {
+            // Если позиция перехода находится перед первой видимой позицией, smoothScrollToPosition может перейти непосредственно
+            recyclerView.smoothScrollToPosition(position);
+        } else if (position <= lastItem) {
+            // Положение перехода - после первого видимого элемента и перед последним видимым элементом
+            // smoothScrollToPosition не будет двигаться вообще, в это время smoothScrollBy вызывается для перемещения в указанную позицию
+            val movePosition = position - firstItem;
+            if (movePosition >= 0 && movePosition < recyclerView.childCount) {
+                val top = recyclerView.getChildAt(movePosition).top;
+                recyclerView.smoothScrollBy(0, top);
+            }
+        } else {
+            // Если позиция для перехода находится после последнего видимого элемента, сначала вызовите smoothScrollToPosition, чтобы прокрутить позицию до видимой позиции
+            // Вызовите smoothMoveToPosition снова через элемент управления onScrollStateChanged, чтобы выполнить метод в предыдущем решении
+            recyclerView.smoothScrollToPosition(position);
+            mToPosition = position;
+            mShouldScroll = true;
+
         }
     }
 
