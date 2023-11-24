@@ -23,6 +23,7 @@ class VideoPlayer
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ): ConstraintLayout(context, attrs, defStyleAttr) {
+    private var isPlaySetting = false
     private var updateUI: ((Int) -> Unit)? = null
 
     private val job = SupervisorJob()
@@ -134,18 +135,22 @@ class VideoPlayer
 
     private fun delay(end: Int) = scope.launch(start = CoroutineStart.LAZY, context = Dispatchers.IO) {
         Log.d("VideoPlayer", "work start: $end")
-        while (binding.videoView.currentPosition <= end)
-            ;
+        while (isActive && isPlaySetting) {
+            yield()
+            Log.d("VideoPlayer", "isPlaySetting: $isPlaySetting")
+            if(isPlaySetting && binding.videoView.currentPosition >= end)
+                break
+        }
         Log.d("VideoPlayer", "work end: $end")
     }
 
     private fun startCoroutineSettings() = scope.launch(start = CoroutineStart.LAZY, context = Dispatchers.IO) {
-        while (true) {
+        while (isActive) {
             nextMarkAndStart()
 
             delay(100)
 
-            while (isMarkPlay)
+            while (isMarkPlay && isActive)
             ;
         }
     }
@@ -166,7 +171,7 @@ class VideoPlayer
         }
     }
 
-    fun nextMarkAndStart() {
+    private fun nextMarkAndStart() {
         Log.d("VideoPlayer", "currentMarkPosition: $currentMarkPosition")
         delayJob?.cancel()
         markJob?.cancel()
@@ -174,7 +179,7 @@ class VideoPlayer
         markJob?.start()
     }
 
-    fun prevMarkAndStart() {
+    private fun prevMarkAndStart() {
         Log.d("VideoPlayer", "currentMarkPosition: $currentMarkPosition")
         delayJob?.cancel()
         markJob?.cancel()
@@ -191,7 +196,7 @@ class VideoPlayer
             ++currentMarkPosition
         } else {
             currentMarkPosition = 0
-            0
+            currentMarkPosition
         }
     }
 
@@ -264,6 +269,7 @@ class VideoPlayer
 
     fun startSettings() {
         currentMarkPosition = -1
+        isPlaySetting = true
         playSetting.start()
     }
 
@@ -278,22 +284,23 @@ class VideoPlayer
     }
 
     fun seekToSubtitleByIndex(index: Int) {
-        Log.d("VideoPageFragment", "seekToSubtitleByIndex: $index")
         binding.videoView.seekTo(subtitles?.get(index)?.to?.toInt()!!)
     }
 
     fun stop() {
+        stopSettings()
         subtitleJob?.cancel()
-        markJob?.cancel()
-        playSetting.cancel()
         timer?.cancel()
         timerTrackLength.cancel()
     }
 
     fun stopSettings() {
+        isPlaySetting = false
+        settings = null
+        isMarkPlay = false
+        delayJob?.cancel()
         markJob?.cancel()
         playSetting.cancel()
-        playSetting = startCoroutineSettings()
     }
 
     fun setSettings(settings: SettingsDto) {

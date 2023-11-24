@@ -54,4 +54,17 @@ class AraokRepository @Inject constructor() {
         val response = RetrofitService.araokApi.getMedia(contentId, typeId)
         return response.bytes().asList()
     }
+
+    //setting
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun getSetting(contentId: Long) =
+        RetrofitService.araokApi.getSetting(contentId).body() ?: SettingsDto()
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun saveSetting(settings: SettingsDto) =
+        RetrofitService.araokApi.settingSave(settings).body() ?: SettingsDto()
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun updateSetting(settings: SettingsDto) =
+        RetrofitService.araokApi.settingUpdate(settings).body() ?: SettingsDto()
 }

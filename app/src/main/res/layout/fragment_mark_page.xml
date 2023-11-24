@@ -77,6 +77,6 @@
         android:background="@color/white"
         android:alpha="0.5"
         android:layout_gravity="center"
-        android:visibility="gone"/>
+        android:visibility="visible"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

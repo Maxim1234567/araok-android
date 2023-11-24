@@ -1,6 +1,8 @@
 package ru.araok.presentation.markpage
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -9,43 +11,98 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import ru.araok.data.db.SettingsMarksDb
+import ru.araok.data.db.SettingsDb
 import ru.araok.data.db.SettingsWithMarksDb
+import ru.araok.data.dto.ContentDto
+import ru.araok.data.dto.MarkDto
+import ru.araok.data.dto.SettingsDto
 import ru.araok.domain.GetAraokDbUseCase
+import ru.araok.domain.GetAraokUseCase
+import ru.araok.entites.SettingsWithMarks
 import javax.inject.Inject
+import kotlin.streams.toList
 
+@RequiresApi(Build.VERSION_CODES.O)
 class MarkPageViewModel @Inject constructor(
-    private val getAraokDbUseCase: GetAraokDbUseCase
+    private val getAraokDbUseCase: GetAraokDbUseCase,
+    private val getAraokUseCase: GetAraokUseCase
 ): ViewModel() {
-    var updateView = true
-
     private val _load = MutableStateFlow(State.EMPTY)
-
     val load: StateFlow<State> = _load.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
         initialValue = _load.value
     )
 
-    lateinit var settings: StateFlow<SettingsWithMarksDb>
+    private var _settingsDb = MutableStateFlow(
+        SettingsWithMarksDb(settingDb = SettingsDb(id = -1, contentId = -1))
+    )
+    val settingsDb: StateFlow<SettingsWithMarks> = _settingsDb.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = _settingsDb.value
+    )
 
-    fun loadMarks(contentId: Int) {
-        updateView = true
-        settings = getAraokDbUseCase.getSettingsWithMarks(contentId)
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.Lazily,
-                initialValue = SettingsWithMarksDb()
+    private var _settings = MutableStateFlow(SettingsDto(id = -1))
+    val settings: StateFlow<SettingsDto> = _settings.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = _settings.value
+    )
+
+    fun loadSettingsDb(contentId: Int) {
+        Log.d("VideoPageViewModel", "loadSettingsDb: $contentId")
+
+        viewModelScope.launch(Dispatchers.IO) {
+            kotlin.runCatching {
+                getAraokDbUseCase.loadSettingsWithMarks(contentId)
+            }.fold(
+                onSuccess = { _settingsDb.value = it },
+                onFailure = { Log.d("VideoPageViewModel", "Error Load Settings Db ${it.message ?: ""}")}
             )
+        }
+    }
+    fun loadSettings(contentId: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            kotlin.runCatching {
+                getAraokUseCase.getSetting(contentId)
+            }.fold(
+                onSuccess = { _settings.value = it },
+                onFailure = { Log.d("VideoPageViewModel", "Error Load Setting: ${it.message ?: ""}")}
+            )
+        }
     }
 
-    fun addSettingsWithMarks(settingsWithMarksDb: SettingsWithMarksDb) {
-        updateView = false
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun addSettingsWithMarksOnlyDb(settingsWithMarksDb: SettingsWithMarksDb) {
         viewModelScope.launch(Dispatchers.IO) {
             kotlin.runCatching {
                 _load.value = State.PROCESS
                 getAraokDbUseCase.deleteSettings(settingsWithMarksDb.settingDb.contentId!!)
                 getAraokDbUseCase.insertSettingWithMarks(settingsWithMarksDb)
+            }.fold(
+                onSuccess = { Log.d("MarkPageViewModel", "onSuccess"); _load.value = State.LOAD; },
+                onFailure = { Log.d("MarkPageViewModel", it.message ?: "Error") }
+            )
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun addSettingsWithMarks(settingsWithMarksDb: SettingsWithMarksDb) {
+        viewModelScope.launch(Dispatchers.IO) {
+            kotlin.runCatching {
+                _load.value = State.PROCESS
+                getAraokDbUseCase.deleteSettings(settingsWithMarksDb.settingDb.contentId!!)
+                getAraokDbUseCase.insertSettingWithMarks(settingsWithMarksDb)
+                getAraokUseCase.saveSetting(SettingsDto(
+                    content = ContentDto(id = settingsWithMarksDb.settingDb.contentId.toLong()),
+                    marks = settingsWithMarksDb.marksDb.stream().map { MarkDto(
+                        start = it.start,
+                        end = it.end,
+                        repeat = it.repeat,
+                        delay = it.delay
+                    ) }.toList())
+                )
             }.fold(
                 onSuccess = { Log.d("MarkPageViewModel", "onSuccess"); _load.value = State.LOAD; },
                 onFailure = { Log.d("MarkPageViewModel", it.message ?: "Error") }

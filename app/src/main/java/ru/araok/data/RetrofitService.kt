@@ -10,6 +10,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 import ru.araok.data.dto.*
@@ -73,5 +74,17 @@ object RetrofitService {
             @Path("contentId") contentId: Long,
             @Path("typeId") typeId: Long
         ): ResponseBody
+
+        //setting
+        @GET("/api/setting/{contentId}")
+        suspend fun getSetting(
+            @Path("contentId") contentId: Long
+        ): Response<SettingsDto>
+
+        @POST("/api/setting")
+        suspend fun settingSave(@Body settings: SettingsDto): Response<SettingsDto>
+
+        @PUT("/api/setting")
+        suspend fun settingUpdate(settings: SettingsDto): Response<SettingsDto>
     }
 }

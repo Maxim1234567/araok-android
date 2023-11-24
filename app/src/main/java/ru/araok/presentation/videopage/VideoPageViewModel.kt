@@ -6,17 +6,18 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import ru.araok.data.db.SettingsDb
 import ru.araok.data.db.SettingsWithMarksDb
+import ru.araok.data.dto.SettingsDto
 import ru.araok.domain.GetAraokDbUseCase
 import ru.araok.domain.GetAraokUseCase
 import ru.araok.entites.Language
-import ru.araok.entites.SettingsWithMarks
 import ru.araok.entites.Subtitle
 import javax.inject.Inject
 
+@RequiresApi(Build.VERSION_CODES.O)
 class VideoPageViewModel @Inject constructor(
     private val getAraokUseCase: GetAraokUseCase,
     private val getAraokDbUseCase: GetAraokDbUseCase
@@ -27,12 +28,15 @@ class VideoPageViewModel @Inject constructor(
     val selectLanguage: Int
         get() = _languageFlow.value
 
-    private val _video = MutableStateFlow(ByteArray(0))
-    val video: StateFlow<ByteArray> = _video.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.Eagerly,
-        initialValue = _video.value
-    )
+    private var _video: Channel<ByteArray> = Channel()
+    val video: Flow<ByteArray> = _video.receiveAsFlow()
+
+//    private val _video = MutableStateFlow(ByteArray(0))
+//    val video: StateFlow<ByteArray> = _video.stateIn(
+//        scope = viewModelScope,
+//        started = SharingStarted.Eagerly,
+//        initialValue = _video.value
+//    )
 
     private val _language = MutableStateFlow<List<Language>>(emptyList())
     val language: StateFlow<List<Language>> = _language.stateIn(
@@ -48,13 +52,14 @@ class VideoPageViewModel @Inject constructor(
         initialValue = _subtitle.value
     )
 
-    private var _settingsDb = MutableStateFlow(
-        SettingsWithMarksDb(settingDb = SettingsDb(id = -1, contentId = -1))
-    )
-    val settingsDb: StateFlow<SettingsWithMarks> = _settingsDb.stateIn(
+    private var _settingsDb: Channel<SettingsWithMarksDb> = Channel()
+    val settingsDb: Flow<SettingsWithMarksDb> = _settingsDb.receiveAsFlow()
+
+    private var _settings = MutableStateFlow(SettingsDto(id = -1))
+    val settings: StateFlow<SettingsDto> = _settings.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
-        initialValue = _settingsDb.value
+        initialValue = _settings.value
     )
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -76,19 +81,32 @@ class VideoPageViewModel @Inject constructor(
 
                 getAraokUseCase.getMedia(contentId)
             }.fold(
-                onSuccess = { _video.value = it.toByteArray() },
+                onSuccess = { _video.send(it.toByteArray()) },
                 onFailure = { Log.d("VideoPageViewModel", it.message ?: "") }
             )
         }
     }
 
-    fun loadSettings(contentId: Int) {
+    fun loadSettingsDb(contentId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             kotlin.runCatching {
-                getAraokDbUseCase.loadSettingsWithMarks(contentId)
+                getAraokDbUseCase.loadSettingsWithMarks(contentId.toInt())
             }.fold(
-                onSuccess = { _settingsDb.value = it },
+                onSuccess = { _settingsDb.send(it) },
                 onFailure = { Log.d("VideoPageViewModel", it.message ?: "")}
+            )
+        }
+    }
+
+    fun loadSettings(contentId: Long) {
+        Log.d("VideoPageViewModel", "loadSetting")
+
+        viewModelScope.launch(Dispatchers.IO) {
+            kotlin.runCatching {
+                getAraokUseCase.getSetting(contentId.toLong())
+            }.fold(
+                onSuccess = { _settings.value = it },
+                onFailure = { Log.d("VideoPageViewModel", "Error Load Setting: ${it.message ?: ""}")}
             )
         }
     }
@@ -100,6 +118,18 @@ class VideoPageViewModel @Inject constructor(
             }.fold(
                 onSuccess = { _language.value = it },
                 onFailure = { Log.d("SubtitleDialogViewModel", it.message ?: "") }
+            )
+        }
+    }
+
+    fun addSettingsWithMarks(settingsWithMarksDb: SettingsWithMarksDb) {
+        viewModelScope.launch(Dispatchers.IO) {
+            kotlin.runCatching {
+                getAraokDbUseCase.deleteSettings(settingsWithMarksDb.settingDb.contentId!!)
+                getAraokDbUseCase.insertSettingWithMarks(settingsWithMarksDb)
+            }.fold(
+                onSuccess = { Log.d("MarkPageViewModel", "onSuccess") },
+                onFailure = { Log.d("MarkPageViewModel", it.message ?: "Error") }
             )
         }
     }

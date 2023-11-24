@@ -2,9 +2,9 @@ package ru.araok.presentation.markpage
 
 import android.graphics.Typeface
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.text.InputFilter
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +12,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -41,6 +42,7 @@ const val CONTENT_ID = "contentId"
 const val PATH_VIDEO = "pathVideo"
 
 @AndroidEntryPoint
+@RequiresApi(Build.VERSION_CODES.O)
 class MarkPageFragment: Fragment() {
     private var _binding: FragmentMarkPageBinding? = null
     private val binding get() = _binding!!
@@ -60,7 +62,7 @@ class MarkPageFragment: Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel.loadMarks(contentId)
+        viewModel.loadSettingsDb(contentId)
     }
 
     override fun onCreateView(
@@ -69,7 +71,6 @@ class MarkPageFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentMarkPageBinding.inflate(inflater, container, false)
-
         return binding.root
     }
 
@@ -117,21 +118,51 @@ class MarkPageFragment: Fragment() {
             viewModel.addSettingsWithMarks(settingsWithMarksDb)
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.settings
-                .collect { it ->
-                    if(viewModel.updateView) {
-                        it.marksDb.forEach {
-                            createNewMark(
-                                start = it.start!!,
-                                end = it.end!!,
-                                repeat = it.repeat?.toString()!!,
-                                delay = it.delay?.toString()!!
-                            )
-                        }
-                    }
+        viewModel.settingsDb.onEach {
+            if(it != null) {
+                it.marksDb.forEach {
+                    createNewMark(
+                        start = it.start!!,
+                        end = it.end!!,
+                        repeat = it.repeat?.toString()!!,
+                        delay = it.delay?.toString()!!
+                    )
                 }
-        }
+
+                binding.progressBar.visibility = View.GONE
+            } else {
+                viewModel.loadSettings(contentId.toLong())
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.settings.onEach {
+            if(it.id != -1L && it.marks.isNotEmpty()) {
+                val settingsWithMarksDb = SettingsWithMarksDb(
+                    settingDb = SettingsDb(contentId = contentId),
+                    marksDb = it.marks.stream().map {
+                        MarkDb(
+                            start = it.start,
+                            end = it.end,
+                            repeat = it.repeat,
+                            delay = it.delay
+                        )
+                    }.toList()
+                )
+
+                viewModel.addSettingsWithMarksOnlyDb(settingsWithMarksDb)
+
+                settingsWithMarksDb.marksDb.forEach {
+                    createNewMark(
+                        start = it.start!!,
+                        end = it.end!!,
+                        repeat = it.repeat?.toString()!!,
+                        delay = it.delay?.toString()!!
+                    )
+                }
+
+                binding.progressBar.visibility = View.GONE
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     private fun createNewMark(
@@ -153,8 +184,6 @@ class MarkPageFragment: Fragment() {
         val linearLayout = linearLayout()
 
         linearLayout.tag = UUID.randomUUID().toString()
-
-        Log.d("MarkPageFragment", "uuid ${binding.llNewMarks.childCount}: ${linearLayout.tag}")
 
         linearLayout.addView(textViewPrefixTo)
         linearLayout.addView(editTextTo)
@@ -242,7 +271,7 @@ class MarkPageFragment: Fragment() {
             marks.add(layoutToMarkDto(view))
         }
 
-        return SettingsDto(marks)
+        return SettingsDto(marks = marks)
     }
 
     private fun getLayoutByUuid(uuid: String) =

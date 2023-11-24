@@ -1,11 +1,11 @@
 package ru.araok.domain
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import ru.araok.consts.TypeContent
 import ru.araok.data.AraokRepository
 import ru.araok.data.dto.ContentWithContentMediaAndMediaSubtitleDto
+import ru.araok.data.dto.SettingsDto
 import ru.araok.entites.AgeLimit
 import ru.araok.entites.Content
 import javax.inject.Inject
@@ -38,4 +38,17 @@ class GetAraokUseCase @Inject constructor(
     //media
     suspend fun getMedia(contentId: Long, typeId: Long = 1) =
         araokRepository.getMedia(contentId, typeId)
+
+    //setting
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun getSetting(contentId: Long) =
+        araokRepository.getSetting(contentId)
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun saveSetting(settings: SettingsDto) =
+        araokRepository.saveSetting(settings)
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun updateSetting(settings: SettingsDto) =
+        araokRepository.updateSetting(settings)
 }
