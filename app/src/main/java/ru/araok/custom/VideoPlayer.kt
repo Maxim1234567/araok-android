@@ -24,6 +24,7 @@ class VideoPlayer
     defStyleAttr: Int = 0
 ): ConstraintLayout(context, attrs, defStyleAttr) {
     private var isPlaySetting = false
+    private var isPlaySubtitle = false
     private var updateUI: ((Int) -> Unit)? = null
 
     private val job = SupervisorJob()
@@ -145,12 +146,12 @@ class VideoPlayer
     }
 
     private fun startCoroutineSettings() = scope.launch(start = CoroutineStart.LAZY, context = Dispatchers.IO) {
-        while (isActive) {
+        while (isActive && isPlaySetting) {
             nextMarkAndStart()
 
             delay(100)
 
-            while (isMarkPlay && isActive)
+            while (isMarkPlay && isActive && isPlaySetting)
             ;
         }
     }
@@ -158,7 +159,7 @@ class VideoPlayer
     private fun startCoroutineSubtitle() = scope.launch(start = CoroutineStart.LAZY, context = Dispatchers.IO) {
         var sendIndex = -1
 
-        while (isActive) {
+        while (isActive && isPlaySubtitle) {
             subtitles?.forEachIndexed { index, subtitle ->
                 if (subtitle.to <= binding.videoView.currentPosition && binding.videoView.currentPosition <= subtitle.from) {
                     if(sendIndex != index) {
@@ -276,6 +277,7 @@ class VideoPlayer
     fun setSubtitleAndStart(subtitles: List<Subtitle>, updateUI: (Int) -> Unit) {
         this.subtitles = subtitles
         this.updateUI = updateUI
+        isPlaySubtitle = true
         subtitleJob = startCoroutineSubtitle()
         subtitleJob?.start()
         binding.videoView.pause()
@@ -289,6 +291,7 @@ class VideoPlayer
 
     fun stop() {
         stopSettings()
+        isPlaySubtitle = false
         subtitleJob?.cancel()
         timer?.cancel()
         timerTrackLength.cancel()

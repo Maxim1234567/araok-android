@@ -27,4 +27,10 @@
     <string name="prefix_delay">Dl</string>
     <string name="add_new_mark">Add new mark</string>
     <string name="save">Save</string>
+    <string name="name">Имя</string>
+    <string name="phone_number">Номер телефона</string>
+    <string name="password">Пароль</string>
+    <string name="repeat_password">Повторите пароль</string>
+    <string name="registration">Зарегистрироваться</string>
+    <string name="enter">Войти</string>
 </resources>

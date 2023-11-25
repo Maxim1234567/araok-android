@@ -3,18 +3,10 @@ package ru.araok.data
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.addAdapter
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import retrofit2.Response
 import ru.araok.consts.TypeContent
 import ru.araok.data.dto.*
-import ru.araok.entites.AgeLimit
-import ru.araok.entites.Content
-import ru.araok.entites.Language
-import ru.araok.entites.MediaSubtitle
+import ru.araok.entites.*
 import javax.inject.Inject
-import kotlin.streams.toList
 
 class AraokRepository @Inject constructor() {
     //age limit
@@ -67,4 +59,18 @@ class AraokRepository @Inject constructor() {
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun updateSetting(settings: SettingsDto) =
         RetrofitService.araokApi.settingUpdate(settings).body() ?: SettingsDto()
+
+    //authorization
+    suspend fun login(jwtRequest: JwtRequestDto) =
+        RetrofitService.araokApi.login(jwtRequest).body() ?: JwtRequestDto()
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun registration(user: UserDto) =
+        RetrofitService.araokApi.registration(user).body() ?: UserDto()
+
+    suspend fun accessToken(refreshJwtRequest: RefreshJwtRequestDto) =
+        RetrofitService.araokApi.accessToken(refreshJwtRequest)
+
+    suspend fun refreshToken(refreshJwtRequest: RefreshJwtRequestDto) =
+        RetrofitService.araokApi.refreshToken(refreshJwtRequest)
 }

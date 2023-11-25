@@ -14,6 +14,8 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 import ru.araok.data.dto.*
+import ru.araok.entites.JwtResponse
+import ru.araok.entites.RefreshJwtRequest
 
 const val BASE_URL = "http://10.0.2.2:8765"
 
@@ -86,5 +88,18 @@ object RetrofitService {
 
         @PUT("/api/setting")
         suspend fun settingUpdate(settings: SettingsDto): Response<SettingsDto>
+
+        //authorization
+        @POST("/auth/login")
+        suspend fun login(@Body jwtRequest: JwtRequestDto): Response<JwtResponseDto>
+
+        @POST("/auth/registration")
+        suspend fun registration(@Body user: UserDto): Response<JwtResponseDto>
+
+        @POST("/auth/token")
+        suspend fun accessToken(@Body refreshJwtRequest: RefreshJwtRequestDto): Response<JwtResponseDto>
+
+        @POST("/auth/refresh")
+        suspend fun refreshToken(@Body refreshJwtRequest: RefreshJwtRequestDto): Response<JwtResponseDto>
     }
 }

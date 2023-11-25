@@ -4,10 +4,10 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import ru.araok.consts.TypeContent
 import ru.araok.data.AraokRepository
-import ru.araok.data.dto.ContentWithContentMediaAndMediaSubtitleDto
-import ru.araok.data.dto.SettingsDto
+import ru.araok.data.dto.*
 import ru.araok.entites.AgeLimit
 import ru.araok.entites.Content
+import ru.araok.entites.JwtRequest
 import javax.inject.Inject
 
 class GetAraokUseCase @Inject constructor(
@@ -51,4 +51,18 @@ class GetAraokUseCase @Inject constructor(
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun updateSetting(settings: SettingsDto) =
         araokRepository.updateSetting(settings)
+
+    //authorization
+    suspend fun login(jwtRequest: JwtRequestDto) =
+        araokRepository.login(jwtRequest)
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun registration(user: UserDto) =
+        araokRepository.registration(user)
+
+    suspend fun accessToken(refreshJwtRequest: RefreshJwtRequestDto) =
+        araokRepository.accessToken(refreshJwtRequest)
+
+    suspend fun refreshToken(refreshJwtRequest: RefreshJwtRequestDto) =
+        araokRepository.refreshToken(refreshJwtRequest)
 }
