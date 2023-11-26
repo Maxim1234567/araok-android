@@ -115,7 +115,7 @@ class MarkPageFragment: Fragment() {
                 }.toList()
             )
 
-            viewModel.addSettingsWithMarks(settingsWithMarksDb)
+            viewModel.addSettingsWithMarks(requireContext(), settingsWithMarksDb)
         }
 
         viewModel.settingsDb.onEach {
@@ -131,7 +131,7 @@ class MarkPageFragment: Fragment() {
 
                 binding.progressBar.visibility = View.GONE
             } else {
-                viewModel.loadSettings(contentId.toLong())
+                viewModel.loadSettings(requireContext(), contentId.toLong())
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 

@@ -1,6 +1,7 @@
 package ru.araok.presentation.addvideopage
 
 import android.content.ContentResolver
+import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.util.Log
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import ru.araok.data.Repository
 import ru.araok.data.dto.*
 import ru.araok.domain.GetAraokUseCase
 import ru.araok.entites.AgeLimit
@@ -48,7 +50,7 @@ class AddVideoPageViewModel @Inject constructor(
     )
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun uploadMedia(contentResolver: ContentResolver) {
+    fun uploadMedia(context: Context, contentResolver: ContentResolver) {
         viewModelScope.launch(Dispatchers.IO) {
             kotlin.runCatching {
                 Log.d(VIDEO_PAGE_VIEW_MODEL_TAG, "uploadMedia")
@@ -128,7 +130,7 @@ class AddVideoPageViewModel @Inject constructor(
 
                 Log.d(VIDEO_PAGE_VIEW_MODEL_TAG, "uploadMedia4")
 
-                getAraokUseCase.contentSave(fullContent)
+                getAraokUseCase.contentSave(Repository.getAccessToken(context), fullContent)
             }.fold(
                 onSuccess = { _content.value = it },
                 onFailure = { Log.d(VIDEO_PAGE_VIEW_MODEL_TAG, it.message ?: "Error") }

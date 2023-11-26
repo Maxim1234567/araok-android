@@ -98,6 +98,30 @@
 
     </fragment>
 
+    <fragment
+        android:id="@+id/registration"
+        android:name="ru.araok.presentation.registration.RegistrationFragment"
+        android:label="Registration"
+        tools:layout="@layout/fragment_registration">
+
+        <action
+            android:id="@+id/registration_to_profile"
+            app:destination="@+id/profile"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/authorization"
+        android:name="ru.araok.presentation.authorization.AuthorizationFragment"
+        android:label="Authorization"
+        tools:layout="@layout/fragment_authorization">
+
+        <action
+            android:id="@+id/authorization_to_profile"
+            app:destination="@+id/profile"/>
+
+    </fragment>
+
     <dialog
         android:id="@+id/subtitle_dialog"
         android:name="ru.araok.presentation.subtitle.SubtitleDialogFragment"

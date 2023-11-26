@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
+import ru.araok.R
 import ru.araok.databinding.FragmentProfileBinding
 import ru.araok.presentation.ViewModelFactory
 import javax.inject.Inject
@@ -35,6 +37,14 @@ class ProfileFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.entry.setOnClickListener {
+            findNavController().navigate(R.id.authorization)
+        }
+
+        binding.registration.setOnClickListener {
+            findNavController().navigate(R.id.registration)
+        }
     }
 
     override fun onDestroyView() {

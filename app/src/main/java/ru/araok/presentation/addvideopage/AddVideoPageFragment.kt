@@ -83,7 +83,10 @@ class VideoPageFragment: Fragment() {
             binding.btnAdd.isEnabled = false
             viewModel.artist = binding.etArtist.text.toString()
             viewModel.songName = binding.etSongName.text.toString()
-            viewModel.uploadMedia(requireActivity().contentResolver)
+            viewModel.uploadMedia(
+                requireContext(),
+                requireActivity().contentResolver
+            )
         }
 
         viewModel.ageLimits.onEach {

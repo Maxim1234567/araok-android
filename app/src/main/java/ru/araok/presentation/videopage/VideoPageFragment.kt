@@ -73,7 +73,7 @@ class VideoPageFragment: Fragment() {
     ): View? {
         _binding = FragmentVideoPageBinding.inflate(inflater, container, false)
         videoPlayer =  _binding?.videoPlayer!!
-        viewModel.loadVideo(contentId)
+        viewModel.loadVideo(requireContext(), contentId)
         return binding.root
     }
 
@@ -146,14 +146,14 @@ class VideoPageFragment: Fragment() {
             }
 
             if (it == null) {
-                viewModel.loadSettings(contentId)
+                viewModel.loadSettings(requireContext(), contentId)
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewModel.languageFlow.onEach {
             if(it != -1) {
                 viewModel.sendLanguageId(-1)
-                viewModel.loadSubtitle(contentId, it.toLong())
+                viewModel.loadSubtitle(requireContext(), contentId, it.toLong())
                 binding.progressBar.visibility = View.VISIBLE
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
@@ -246,7 +246,7 @@ class VideoPageFragment: Fragment() {
             REQUEST_CODE_PERMISSION_VIDEO -> {
                 if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(requireContext(), getString(R.string.permission_granted), Toast.LENGTH_SHORT).show()
-                    viewModel.loadVideo(contentId)
+                    viewModel.loadVideo(requireContext(), contentId)
                 } else {
                     Toast.makeText(requireContext(), getString(R.string.permission_denied), Toast.LENGTH_SHORT).show()
                 }

@@ -1,10 +1,12 @@
 package ru.araok.presentation.subtitle
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -20,6 +22,7 @@ import javax.inject.Inject
 private const val CONTENT_ID = "contentId"
 
 @AndroidEntryPoint
+@RequiresApi(Build.VERSION_CODES.O)
 class SubtitleDialogFragment: DialogFragment() {
     private var _binding: FragmentDialogSubtitleBinding? = null
     private val binding get() = _binding!!
@@ -45,7 +48,7 @@ class SubtitleDialogFragment: DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel.getAllLanguageSubtitle(contentId)
+        viewModel.getAllLanguageSubtitle(requireContext(), contentId)
     }
 
     override fun onCreateView(

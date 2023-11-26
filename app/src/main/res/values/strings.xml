@@ -33,4 +33,5 @@
     <string name="repeat_password">Повторите пароль</string>
     <string name="registration">Зарегистрироваться</string>
     <string name="enter">Войти</string>
+    <string name="entry">Войти</string>
 </resources>

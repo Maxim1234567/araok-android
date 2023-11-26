@@ -8,6 +8,7 @@ import retrofit2.Response
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -48,10 +49,16 @@ object RetrofitService {
         suspend fun getContentsByName(@Path("name") name: String): Response<List<ContentDto>>
 
         @GET("/api/content/id/{id}")
-        suspend fun getContentById(@Path("id") id: Long): Response<ContentDto>
+        suspend fun getContentById(
+            @Header("Authorization") accessToken: String,
+            @Path("id") id: Long
+        ): Response<ContentDto>
 
         @POST("/api/content")
-        suspend fun contentSave(@Body content: ContentWithContentMediaAndMediaSubtitleDto): Response<String>
+        suspend fun contentSave(
+            @Header("Authorization") accessToken: String,
+            @Body content: ContentWithContentMediaAndMediaSubtitleDto
+        ): Response<String>
 
         //language
         @GET("/api/language")
@@ -60,12 +67,14 @@ object RetrofitService {
         //media subtitle
         @GET("/api/subtitle/{contentId}/{languageId}")
         suspend fun getSubtitle(
+            @Header("Authorization") accessToken: String,
             @Path("contentId") contentId: Long,
             @Path("languageId") languageId: Long
         ): Response<MediaSubtitleDto>
 
         @GET("/api/subtitle/{contentId}")
         suspend fun getAllLanguageSubtitle(
+            @Header("Authorization") accessToken: String,
             @Path("contentId") contentId: Long
         ): Response<List<LanguageDto>>
 
@@ -73,6 +82,7 @@ object RetrofitService {
         @GET("/api/media/{contentId}/{typeId}")
         @Headers("Content-Type: application/octet-stream")
         suspend fun getMedia(
+            @Header("Authorization") accessToken: String,
             @Path("contentId") contentId: Long,
             @Path("typeId") typeId: Long
         ): ResponseBody
@@ -80,14 +90,21 @@ object RetrofitService {
         //setting
         @GET("/api/setting/{contentId}")
         suspend fun getSetting(
+            @Header("Authorization") accessToken: String,
             @Path("contentId") contentId: Long
         ): Response<SettingsDto>
 
         @POST("/api/setting")
-        suspend fun settingSave(@Body settings: SettingsDto): Response<SettingsDto>
+        suspend fun settingSave(
+            @Header("Authorization") accessToken: String,
+            @Body settings: SettingsDto
+        ): Response<SettingsDto>
 
         @PUT("/api/setting")
-        suspend fun settingUpdate(settings: SettingsDto): Response<SettingsDto>
+        suspend fun settingUpdate(
+            @Header("Authorization") accessToken: String,
+            @Body settings: SettingsDto
+        ): Response<SettingsDto>
 
         //authorization
         @POST("/auth/login")
@@ -100,6 +117,9 @@ object RetrofitService {
         suspend fun accessToken(@Body refreshJwtRequest: RefreshJwtRequestDto): Response<JwtResponseDto>
 
         @POST("/auth/refresh")
-        suspend fun refreshToken(@Body refreshJwtRequest: RefreshJwtRequestDto): Response<JwtResponseDto>
+        suspend fun refreshToken(
+            @Header("Authorization") accessToken: String,
+            @Body refreshJwtRequest: RefreshJwtRequestDto
+        ): Response<JwtResponseDto>
     }
 }

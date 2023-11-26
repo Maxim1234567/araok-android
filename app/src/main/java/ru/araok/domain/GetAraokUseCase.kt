@@ -22,35 +22,40 @@ class GetAraokUseCase @Inject constructor(
     suspend fun getContentsByName(name: String) = araokRepository.getContentsByName(name)
 
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun getContentById(id: Long) = araokRepository.getContentById(id)
+    suspend fun getContentById(accessToken: String, id: Long) = araokRepository.getContentById(accessToken, id)
 
-    suspend fun contentSave(content: ContentWithContentMediaAndMediaSubtitleDto) = araokRepository.contentSave(content)
+    suspend fun contentSave(
+        accessToken: String,
+        content: ContentWithContentMediaAndMediaSubtitleDto
+    ) = araokRepository.contentSave(accessToken, content)
 
     //language
     suspend fun gtAllLanguages() = araokRepository.getAllLanguages()
 
-    suspend fun getAllLanguageSubtitle(contentId: Long) = araokRepository.getAllLanguageSubtitle(contentId)
+    suspend fun getAllLanguageSubtitle(accessToken: String, contentId: Long) =
+        araokRepository.getAllLanguageSubtitle(accessToken, contentId)
 
     //media subtitle
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun getSubtitle(contentId: Long, languageId: Long) = araokRepository.getSubtitle(contentId, languageId)
+    suspend fun getSubtitle(accessToken: String, contentId: Long, languageId: Long) =
+        araokRepository.getSubtitle(accessToken, contentId, languageId)
 
     //media
-    suspend fun getMedia(contentId: Long, typeId: Long = 1) =
-        araokRepository.getMedia(contentId, typeId)
+    suspend fun getMedia(accessToken: String, contentId: Long, typeId: Long = 1) =
+        araokRepository.getMedia(accessToken, contentId, typeId)
 
     //setting
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun getSetting(contentId: Long) =
-        araokRepository.getSetting(contentId)
+    suspend fun getSetting(accessToken: String, contentId: Long) =
+        araokRepository.getSetting(accessToken, contentId)
 
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun saveSetting(settings: SettingsDto) =
-        araokRepository.saveSetting(settings)
+    suspend fun saveSetting(accessToken: String, settings: SettingsDto) =
+        araokRepository.saveSetting(accessToken, settings)
 
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun updateSetting(settings: SettingsDto) =
-        araokRepository.updateSetting(settings)
+    suspend fun updateSetting(accessToken: String, settings: SettingsDto) =
+        araokRepository.updateSetting(accessToken, settings)
 
     //authorization
     suspend fun login(jwtRequest: JwtRequestDto) =
@@ -63,6 +68,6 @@ class GetAraokUseCase @Inject constructor(
     suspend fun accessToken(refreshJwtRequest: RefreshJwtRequestDto) =
         araokRepository.accessToken(refreshJwtRequest)
 
-    suspend fun refreshToken(refreshJwtRequest: RefreshJwtRequestDto) =
-        araokRepository.refreshToken(refreshJwtRequest)
+    suspend fun refreshToken(accessToken: String, refreshJwtRequest: RefreshJwtRequestDto) =
+        araokRepository.refreshToken(accessToken, refreshJwtRequest)
 }

@@ -1,5 +1,6 @@
 package ru.araok.presentation.videopage
 
+import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -9,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import ru.araok.data.Repository
 import ru.araok.data.db.SettingsWithMarksDb
 import ru.araok.data.dto.SettingsDto
 import ru.araok.domain.GetAraokDbUseCase
@@ -30,13 +32,6 @@ class VideoPageViewModel @Inject constructor(
 
     private var _video: Channel<ByteArray> = Channel()
     val video: Flow<ByteArray> = _video.receiveAsFlow()
-
-//    private val _video = MutableStateFlow(ByteArray(0))
-//    val video: StateFlow<ByteArray> = _video.stateIn(
-//        scope = viewModelScope,
-//        started = SharingStarted.Eagerly,
-//        initialValue = _video.value
-//    )
 
     private val _language = MutableStateFlow<List<Language>>(emptyList())
     val language: StateFlow<List<Language>> = _language.stateIn(
@@ -63,10 +58,10 @@ class VideoPageViewModel @Inject constructor(
     )
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun loadSubtitle(contentId: Long, languageId: Long) {
+    fun loadSubtitle(context: Context, contentId: Long, languageId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             kotlin.runCatching {
-                getAraokUseCase.getSubtitle(contentId, languageId)
+                getAraokUseCase.getSubtitle(Repository.getAccessToken(context), contentId, languageId)
             }.fold(
                 onSuccess = { _subtitle.value = it.subtitles },
                 onFailure = { Log.d("VideoPageViewModel", it.message ?: "") }
@@ -74,12 +69,12 @@ class VideoPageViewModel @Inject constructor(
         }
     }
 
-    fun loadVideo(contentId: Long) {
+    fun loadVideo(context: Context, contentId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             kotlin.runCatching {
                 Log.d("VideoPageViewModel", "contentId: $contentId")
 
-                getAraokUseCase.getMedia(contentId)
+                getAraokUseCase.getMedia(Repository.getAccessToken(context), contentId)
             }.fold(
                 onSuccess = { _video.send(it.toByteArray()) },
                 onFailure = { Log.d("VideoPageViewModel", it.message ?: "") }
@@ -98,12 +93,12 @@ class VideoPageViewModel @Inject constructor(
         }
     }
 
-    fun loadSettings(contentId: Long) {
+    fun loadSettings(context: Context, contentId: Long) {
         Log.d("VideoPageViewModel", "loadSetting")
 
         viewModelScope.launch(Dispatchers.IO) {
             kotlin.runCatching {
-                getAraokUseCase.getSetting(contentId.toLong())
+                getAraokUseCase.getSetting(Repository.getAccessToken(context), contentId)
             }.fold(
                 onSuccess = { _settings.value = it },
                 onFailure = { Log.d("VideoPageViewModel", "Error Load Setting: ${it.message ?: ""}")}
@@ -111,10 +106,10 @@ class VideoPageViewModel @Inject constructor(
         }
     }
 
-    fun getAllLanguageSubtitle(contentId: Long) {
+    fun getAllLanguageSubtitle(context: Context, contentId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             kotlin.runCatching {
-                getAraokUseCase.getAllLanguageSubtitle(contentId)
+                getAraokUseCase.getAllLanguageSubtitle(Repository.getAccessToken(context), contentId)
             }.fold(
                 onSuccess = { _language.value = it },
                 onFailure = { Log.d("SubtitleDialogViewModel", it.message ?: "") }

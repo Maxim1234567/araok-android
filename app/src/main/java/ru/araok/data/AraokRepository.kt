@@ -21,56 +21,52 @@ class AraokRepository @Inject constructor() {
         RetrofitService.araokApi.getContentsByName(name).body() ?: emptyList()
 
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun getContentById(id: Long): Content =
-        RetrofitService.araokApi.getContentById(id).body() ?: ContentDto()
+    suspend fun getContentById(accessToken: String, id: Long): Content =
+        RetrofitService.araokApi.getContentById(accessToken, id).body() ?: ContentDto()
 
-    suspend fun contentSave(content: ContentWithContentMediaAndMediaSubtitleDto): String =
-        RetrofitService.araokApi.contentSave(content).body() ?: "Not OK"
+    suspend fun contentSave(accessToken: String, content: ContentWithContentMediaAndMediaSubtitleDto): String =
+        RetrofitService.araokApi.contentSave(accessToken, content).body() ?: "Not OK"
 
     //language
     suspend fun getAllLanguages(): List<Language> =
         RetrofitService.araokApi.getAllLanguages().body() ?: emptyList()
 
-    suspend fun getAllLanguageSubtitle(contentId: Long) =
-        RetrofitService.araokApi.getAllLanguageSubtitle(contentId).body() ?: emptyList()
+    suspend fun getAllLanguageSubtitle(accessToken: String, contentId: Long) =
+        RetrofitService.araokApi.getAllLanguageSubtitle(accessToken, contentId).body() ?: emptyList()
 
     //media subtitle
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun getSubtitle(contentId: Long, languageId: Long) =
-        RetrofitService.araokApi.getSubtitle(contentId, languageId).body() ?: MediaSubtitleDto()
+    suspend fun getSubtitle(accessToken: String, contentId: Long, languageId: Long) =
+        RetrofitService.araokApi.getSubtitle(accessToken, contentId, languageId).body() ?: MediaSubtitleDto()
 
     //media
-    suspend fun getMedia(contentId: Long, typeId: Long): List<Byte> {
-        Log.d("AraokRepository", "contentId: $contentId, typeId: $typeId");
-
-        val response = RetrofitService.araokApi.getMedia(contentId, typeId)
-        return response.bytes().asList()
-    }
+    suspend fun getMedia(accessToken: String, contentId: Long, typeId: Long) =
+        RetrofitService.araokApi.getMedia(accessToken, contentId, typeId).bytes().asList()
 
     //setting
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun getSetting(contentId: Long) =
-        RetrofitService.araokApi.getSetting(contentId).body() ?: SettingsDto()
+    suspend fun getSetting(accessToken: String, contentId: Long) =
+        RetrofitService.araokApi.getSetting(accessToken, contentId).body() ?: SettingsDto()
 
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun saveSetting(settings: SettingsDto) =
-        RetrofitService.araokApi.settingSave(settings).body() ?: SettingsDto()
+    suspend fun saveSetting(accessToken: String, settings: SettingsDto) =
+        RetrofitService.araokApi.settingSave(accessToken, settings).body() ?: SettingsDto()
 
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun updateSetting(settings: SettingsDto) =
-        RetrofitService.araokApi.settingUpdate(settings).body() ?: SettingsDto()
+    suspend fun updateSetting(accessToken: String, settings: SettingsDto) =
+        RetrofitService.araokApi.settingUpdate(accessToken, settings).body() ?: SettingsDto()
 
     //authorization
     suspend fun login(jwtRequest: JwtRequestDto) =
-        RetrofitService.araokApi.login(jwtRequest).body() ?: JwtRequestDto()
+        RetrofitService.araokApi.login(jwtRequest).body() ?: JwtResponseDto()
 
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun registration(user: UserDto) =
-        RetrofitService.araokApi.registration(user).body() ?: UserDto()
+        RetrofitService.araokApi.registration(user).body() ?: JwtResponseDto()
 
     suspend fun accessToken(refreshJwtRequest: RefreshJwtRequestDto) =
         RetrofitService.araokApi.accessToken(refreshJwtRequest)
 
-    suspend fun refreshToken(refreshJwtRequest: RefreshJwtRequestDto) =
-        RetrofitService.araokApi.refreshToken(refreshJwtRequest)
+    suspend fun refreshToken(accessToken: String, refreshJwtRequest: RefreshJwtRequestDto) =
+        RetrofitService.araokApi.refreshToken(accessToken, refreshJwtRequest)
 }
