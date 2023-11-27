@@ -22,6 +22,8 @@ class AuthorizationViewModel @Inject constructor(
     fun loginClient(jwtRequestDto: JwtRequestDto) {
         viewModelScope.launch(Dispatchers.IO) {
             kotlin.runCatching {
+                Log.d("AuthorizationViewModel", "login")
+
                 getAraokUseCase.login(jwtRequestDto)
             }.fold(
                 onSuccess = { _login.send(it) },

@@ -1,5 +1,11 @@
 package ru.araok
 
+import android.content.Context
+import android.os.Looper
+import android.widget.Toast
+import java.util.*
+import java.util.logging.Handler
+
 fun milliSecondsToTimer(milliseconds: Int): String {
     var minutesString = ""
     var secondsString = ""
@@ -27,4 +33,16 @@ fun timerToMilliSeconds(timer: String): Int {
     val seconds = timer.split(":")[1].toInt()
 
     return minutes * 60 * 1000 + seconds * 1000
+}
+
+fun backgroundThreadShortToast(context: Context, msg: String) {
+    if(Objects.nonNull(context) && Objects.nonNull(msg)) {
+        android.os.Handler(Looper.getMainLooper()).post {
+            Toast.makeText(
+                context,
+                msg,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
 }

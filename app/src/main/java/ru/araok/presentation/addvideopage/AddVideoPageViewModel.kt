@@ -53,8 +53,6 @@ class AddVideoPageViewModel @Inject constructor(
     fun uploadMedia(context: Context, contentResolver: ContentResolver) {
         viewModelScope.launch(Dispatchers.IO) {
             kotlin.runCatching {
-                Log.d(VIDEO_PAGE_VIEW_MODEL_TAG, "uploadMedia")
-
                 val user = UserDto(
                     id = 1,
                     name = "Maxim",
@@ -102,8 +100,6 @@ class AddVideoPageViewModel @Inject constructor(
                     media = previewBytes
                 )
 
-                Log.d(VIDEO_PAGE_VIEW_MODEL_TAG, "uploadMedia2")
-
                 val mediaId = ContentMediaIdDto(
                     content = content,
                     mediaType = MediaTypeDto(
@@ -119,8 +115,6 @@ class AddVideoPageViewModel @Inject constructor(
                     media = mediaBytes
                 )
 
-                Log.d(VIDEO_PAGE_VIEW_MODEL_TAG, "uploadMedia3")
-
                 val fullContent = ContentWithContentMediaAndMediaSubtitleDto(
                     content = content,
                     mediaSubtitle = mediaSubtitleOriginal,
@@ -128,12 +122,10 @@ class AddVideoPageViewModel @Inject constructor(
                     video = media
                 )
 
-                Log.d(VIDEO_PAGE_VIEW_MODEL_TAG, "uploadMedia4")
-
                 getAraokUseCase.contentSave(Repository.getAccessToken(context), fullContent)
             }.fold(
                 onSuccess = { _content.value = it },
-                onFailure = { Log.d(VIDEO_PAGE_VIEW_MODEL_TAG, it.message ?: "Error") }
+                onFailure = { _content.value = "FAILURE"; Log.d(VIDEO_PAGE_VIEW_MODEL_TAG, "uploadMedia ${it.message ?: "Error"}"); }
             )
         }
     }

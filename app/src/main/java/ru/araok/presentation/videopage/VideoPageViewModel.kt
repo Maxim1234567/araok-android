@@ -73,6 +73,7 @@ class VideoPageViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             kotlin.runCatching {
                 Log.d("VideoPageViewModel", "contentId: $contentId")
+                Log.d("VideoPageViewModel", "accessToken: ${Repository.getAccessToken(context)}")
 
                 getAraokUseCase.getMedia(Repository.getAccessToken(context), contentId)
             }.fold(

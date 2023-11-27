@@ -1,6 +1,7 @@
 package ru.araok.presentation.authorization
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,6 +45,8 @@ class AuthorizationFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.authorization.setOnClickListener {
+            Log.d("AuthorizationFragment", "onClickListener")
+
             val jwtRequest = JwtRequestDto(
                 phone = binding.phone.text.toString(),
                 password = binding.password.text.toString()
@@ -53,6 +56,9 @@ class AuthorizationFragment: Fragment() {
         }
 
         viewModel.login.onEach {
+            Log.d("AuthorizationFragment", "accessToken: ${it.accessToken}")
+            Log.d("AuthorizationFragment", "refreshToken: ${it.refreshToken}")
+
             if(it.accessToken != null && it.refreshToken != null) {
                 Repository.saveAccessToken(requireContext(), it.accessToken)
                 Repository.saveRefreshToken(requireContext(), it.refreshToken)

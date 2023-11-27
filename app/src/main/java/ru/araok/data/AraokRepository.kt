@@ -8,6 +8,8 @@ import ru.araok.data.dto.*
 import ru.araok.entites.*
 import javax.inject.Inject
 
+private const val BEARER = "Bearer "
+
 class AraokRepository @Inject constructor() {
     //age limit
     suspend fun getAgeLimit(): List<AgeLimit> =
@@ -22,39 +24,39 @@ class AraokRepository @Inject constructor() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun getContentById(accessToken: String, id: Long): Content =
-        RetrofitService.araokApi.getContentById(accessToken, id).body() ?: ContentDto()
+        RetrofitService.araokApi.getContentById(BEARER + accessToken, id).body() ?: ContentDto()
 
     suspend fun contentSave(accessToken: String, content: ContentWithContentMediaAndMediaSubtitleDto): String =
-        RetrofitService.araokApi.contentSave(accessToken, content).body() ?: "Not OK"
+        RetrofitService.araokApi.contentSave(BEARER + accessToken, content).body() ?: "Not OK"
 
     //language
     suspend fun getAllLanguages(): List<Language> =
         RetrofitService.araokApi.getAllLanguages().body() ?: emptyList()
 
     suspend fun getAllLanguageSubtitle(accessToken: String, contentId: Long) =
-        RetrofitService.araokApi.getAllLanguageSubtitle(accessToken, contentId).body() ?: emptyList()
+        RetrofitService.araokApi.getAllLanguageSubtitle(BEARER + accessToken, contentId).body() ?: emptyList()
 
     //media subtitle
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun getSubtitle(accessToken: String, contentId: Long, languageId: Long) =
-        RetrofitService.araokApi.getSubtitle(accessToken, contentId, languageId).body() ?: MediaSubtitleDto()
+        RetrofitService.araokApi.getSubtitle(BEARER + accessToken, contentId, languageId).body() ?: MediaSubtitleDto()
 
     //media
     suspend fun getMedia(accessToken: String, contentId: Long, typeId: Long) =
-        RetrofitService.araokApi.getMedia(accessToken, contentId, typeId).bytes().asList()
+        RetrofitService.araokApi.getMedia(BEARER + accessToken, contentId, typeId).bytes().asList()
 
     //setting
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun getSetting(accessToken: String, contentId: Long) =
-        RetrofitService.araokApi.getSetting(accessToken, contentId).body() ?: SettingsDto()
+        RetrofitService.araokApi.getSetting(BEARER + accessToken, contentId).body() ?: SettingsDto()
 
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun saveSetting(accessToken: String, settings: SettingsDto) =
-        RetrofitService.araokApi.settingSave(accessToken, settings).body() ?: SettingsDto()
+        RetrofitService.araokApi.settingSave(BEARER + accessToken, settings).body() ?: SettingsDto()
 
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun updateSetting(accessToken: String, settings: SettingsDto) =
-        RetrofitService.araokApi.settingUpdate(accessToken, settings).body() ?: SettingsDto()
+        RetrofitService.araokApi.settingUpdate(BEARER + accessToken, settings).body() ?: SettingsDto()
 
     //authorization
     suspend fun login(jwtRequest: JwtRequestDto) =
@@ -68,5 +70,5 @@ class AraokRepository @Inject constructor() {
         RetrofitService.araokApi.accessToken(refreshJwtRequest)
 
     suspend fun refreshToken(accessToken: String, refreshJwtRequest: RefreshJwtRequestDto) =
-        RetrofitService.araokApi.refreshToken(accessToken, refreshJwtRequest)
+        RetrofitService.araokApi.refreshToken(BEARER + accessToken, refreshJwtRequest)
 }

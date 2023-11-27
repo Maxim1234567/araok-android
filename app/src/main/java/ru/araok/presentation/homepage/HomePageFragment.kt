@@ -111,8 +111,6 @@ class HomePageFragment : Fragment() {
     }
 
     private fun onClick(id: Long) {
-        Log.d("HomePageFragment", "CONTENT_ID: " + id)
-
         val bundle = bundleOf(CONTENT_ID to id)
         findNavController().navigate(R.id.homepage_to_video_page, bundle)
     }

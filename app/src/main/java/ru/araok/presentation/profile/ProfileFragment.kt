@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ru.araok.R
+import ru.araok.data.Repository
 import ru.araok.databinding.FragmentProfileBinding
 import ru.araok.presentation.ViewModelFactory
 import javax.inject.Inject
@@ -38,12 +39,26 @@ class ProfileFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if(
+            Repository.getAccessToken(requireContext()).isNotBlank() &&
+            Repository.getRefreshToken(requireContext()).isNotBlank()) {
+            binding.authorizeUser.visibility = View.VISIBLE
+            binding.unauthorizeUser.visibility = View.GONE
+        } else {
+            binding.authorizeUser.visibility = View.GONE
+            binding.unauthorizeUser.visibility = View.VISIBLE
+        }
+
         binding.entry.setOnClickListener {
             findNavController().navigate(R.id.authorization)
         }
 
         binding.registration.setOnClickListener {
             findNavController().navigate(R.id.registration)
+        }
+
+        binding.exit.setOnClickListener {
+
         }
     }
 
