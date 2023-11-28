@@ -21,22 +21,34 @@ class AuthorizationResponseInterceptor: Interceptor {
         Log.d("AuthorizationResponseInterceptor", "intercept")
 
         if(response.code() == FORBIDDEN_CODE) {
-//            backgroundThreadShortToast(App.getContext(), "Доступ к запрошенному ресурсу запрещен")
-            runBlocking {
-                withContext(Dispatchers.IO) {
-                    val refreshToken = RefreshJwtRequestDto(
-                        Repository.getRefreshToken(App.getContext())
-                    )
+            if(Repository.getAccessToken(App.getContext()).isEmpty()) {
+                backgroundThreadShortToast(
+                    App.getContext(),
+                    "Доступ к запрошенному ресурсу запрещен"
+                )
+            } else {
+                runBlocking {
+                    withContext(Dispatchers.IO) {
+                        val refreshToken = RefreshJwtRequestDto(
+                            Repository.getRefreshToken(App.getContext())
+                        )
 
-                    var jwtResponse = RetrofitService.araokApi.accessToken(refreshToken).body() ?: JwtResponseDto()
+                        var jwtResponse = RetrofitService.araokApi.accessToken(refreshToken).body()
+                            ?: JwtResponseDto()
 
-                    jwtResponse = RetrofitService.araokApi
-                        .refreshToken("Bearer " + jwtResponse.accessToken, refreshToken).body() ?: JwtResponseDto()
+                        jwtResponse = RetrofitService.araokApi
+                            .refreshToken("Bearer " + jwtResponse.accessToken, refreshToken).body()
+                            ?: JwtResponseDto()
 
-                    Log.d("AuthorizationResponseInterceptor", "refresh token complete")
-
-                    Repository.saveAccessToken(context = App.getContext(), accessToken = jwtResponse.accessToken ?: "")
-                    Repository.saveRefreshToken(context = App.getContext(), refreshToken = jwtResponse.refreshToken ?: "")
+                        Repository.saveAccessToken(
+                            context = App.getContext(),
+                            accessToken = jwtResponse.accessToken ?: ""
+                        )
+                        Repository.saveRefreshToken(
+                            context = App.getContext(),
+                            refreshToken = jwtResponse.refreshToken ?: ""
+                        )
+                    }
                 }
             }
         } else if(response.code() == UNAUTHORIZED_CODE) {

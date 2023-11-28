@@ -58,7 +58,10 @@ class ProfileFragment: Fragment() {
         }
 
         binding.exit.setOnClickListener {
-
+            Repository.saveAccessToken(requireContext(), "")
+            Repository.saveRefreshToken(requireContext(), "")
+            binding.unauthorizeUser.visibility = View.VISIBLE
+            binding.authorizeUser.visibility = View.GONE
         }
     }
 

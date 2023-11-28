@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -45,10 +46,17 @@ class AuthorizationFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.authorization.setOnClickListener {
-            Log.d("AuthorizationFragment", "onClickListener")
+            Log.d("AuthorizationFragment", "phone: ${binding.phone.text}")
+            Log.d("AuthorizationFragment", "password: ${binding.password.text}")
+
+            val phoneNumber = binding.phone.text?.toString()
+                ?.replace("+7", "")
+                ?.replace("(", "")
+                ?.replace(")", "")
+                ?.replace("-", "")
 
             val jwtRequest = JwtRequestDto(
-                phone = binding.phone.text.toString(),
+                phone = phoneNumber,
                 password = binding.password.text.toString()
             )
 
@@ -63,6 +71,8 @@ class AuthorizationFragment: Fragment() {
                 Repository.saveAccessToken(requireContext(), it.accessToken)
                 Repository.saveRefreshToken(requireContext(), it.refreshToken)
                 findNavController().navigate(R.id.authorization_to_profile)
+            } else {
+                Toast.makeText(requireContext(), "Неправильный номер телефона или пароль!", Toast.LENGTH_SHORT).show()
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }

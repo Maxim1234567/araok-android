@@ -119,7 +119,7 @@ object RetrofitService {
         suspend fun login(@Body jwtRequest: JwtRequestDto): Response<JwtResponseDto>
 
         @POST("/auth/registration")
-        suspend fun registration(@Body user: UserDto): Response<JwtResponseDto>
+        suspend fun registration(@Body user: UserDto): Response<UserWithJwtResponseDto>
 
         @POST("/auth/token")
         suspend fun accessToken(@Body refreshJwtRequest: RefreshJwtRequestDto): Response<JwtResponseDto>

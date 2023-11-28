@@ -86,9 +86,10 @@ class RegistrationFragment: Fragment() {
         }
 
         viewModel.registration.onEach {
-            if(it.accessToken != null && it.refreshToken != null) {
-                Repository.saveAccessToken(requireContext(), it.accessToken)
-                Repository.saveRefreshToken(requireContext(), it.refreshToken)
+            if(it.token.accessToken != null && it.token.refreshToken != null) {
+                Repository.saveUserId(requireContext(), it.user.id)
+                Repository.saveAccessToken(requireContext(), it.token.accessToken!!)
+                Repository.saveRefreshToken(requireContext(), it.token.refreshToken!!)
                 findNavController().navigate(R.id.registration_to_profile)
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)

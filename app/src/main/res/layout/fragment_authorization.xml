@@ -14,22 +14,25 @@
         android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
-        <EditText
+
+        <ru.araok.custom.MaskedEditText
             android:id="@+id/phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/phone_number"
+            android:layout_marginTop="8dp"
             android:inputType="phone"
             android:typeface="monospace"
             mask:allowed_chars="1234567890"
             mask:mask="+7(###)###-##-##"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@+id/name"/>
 
         <EditText
             android:id="@+id/password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/password"
+            android:inputType="numberPassword"
             app:layout_constraintTop_toBottomOf="@+id/phone"/>
 
         <Button
