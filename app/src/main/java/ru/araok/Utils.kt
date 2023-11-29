@@ -46,3 +46,9 @@ fun backgroundThreadShortToast(context: Context, msg: String) {
         }
     }
 }
+
+fun maskPhoneToNumberPhone(maskPhone: String) = maskPhone
+    .replace("+7", "")
+    .replace("(", "")
+    .replace(")", "")
+    .replace("-", "")

@@ -19,6 +19,7 @@ import ru.araok.presentation.ViewModelFactory
 import javax.inject.Inject
 import androidx.navigation.fragment.findNavController
 import ru.araok.R
+import ru.araok.maskPhoneToNumberPhone
 
 @AndroidEntryPoint
 class AuthorizationFragment: Fragment() {
@@ -49,11 +50,7 @@ class AuthorizationFragment: Fragment() {
             Log.d("AuthorizationFragment", "phone: ${binding.phone.text}")
             Log.d("AuthorizationFragment", "password: ${binding.password.text}")
 
-            val phoneNumber = binding.phone.text?.toString()
-                ?.replace("+7", "")
-                ?.replace("(", "")
-                ?.replace(")", "")
-                ?.replace("-", "")
+            val phoneNumber = maskPhoneToNumberPhone(binding.phone.text?.toString()!!)
 
             val jwtRequest = JwtRequestDto(
                 phone = phoneNumber,

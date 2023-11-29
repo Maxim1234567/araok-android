@@ -70,4 +70,8 @@ class GetAraokUseCase @Inject constructor(
 
     suspend fun refreshToken(accessToken: String, refreshJwtRequest: RefreshJwtRequestDto) =
         araokRepository.refreshToken(accessToken, refreshJwtRequest)
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun getUser(accessToken: String, id: Long) =
+        araokRepository.getUser(accessToken, id)
 }

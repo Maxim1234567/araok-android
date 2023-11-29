@@ -1,13 +1,19 @@
 package ru.araok.presentation.profile
 
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.araok.R
 import ru.araok.data.Repository
 import ru.araok.databinding.FragmentProfileBinding
@@ -23,8 +29,18 @@ class ProfileFragment: Fragment() {
     lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: ProfileViewModel by viewModels { viewModelFactory }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("RegistrationFragment", "getAccessToken: ${Repository.getAccessToken(requireContext())}")
+        Log.d("RegistrationFragment", "getUserId: ${Repository.getUserId(requireContext())}")
+        Log.d("RegistrationFragment", "bool: ${Repository.getAccessToken(requireContext()).isNotEmpty()}")
+
+        if(
+            Repository.getAccessToken(requireContext()).isNotEmpty() &&
+            Repository.getUserId(requireContext()) != 0L) {
+            viewModel.user(Repository.getAccessToken(requireContext()), Repository.getUserId(requireContext()))
+        }
     }
 
     override fun onCreateView(
@@ -36,6 +52,7 @@ class ProfileFragment: Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -63,6 +80,15 @@ class ProfileFragment: Fragment() {
             binding.unauthorizeUser.visibility = View.VISIBLE
             binding.authorizeUser.visibility = View.GONE
         }
+
+        viewModel.user.onEach {
+            Log.d("RegistrationFragment", "it.id: ${it.id}")
+
+            if(it.id != -1L) {
+                binding.name.text = it.name
+                binding.birthDate.text = it.birthDate.toString()
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     override fun onDestroyView() {

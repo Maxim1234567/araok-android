@@ -129,5 +129,11 @@ object RetrofitService {
             @Header("Authorization") accessToken: String,
             @Body refreshJwtRequest: RefreshJwtRequestDto
         ): Response<JwtResponseDto>
+
+        @GET("/auth/user/{userId}")
+        suspend fun getUser(
+            @Header("Authorization") accessToken: String,
+            @Path("userId") id: Long
+        ): Response<UserDto>
     }
 }

@@ -3,6 +3,7 @@ package ru.araok.presentation.registration
 import android.app.DatePickerDialog
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,7 @@ import ru.araok.R
 import ru.araok.data.Repository
 import ru.araok.data.dto.UserDto
 import ru.araok.databinding.FragmentRegistrationBinding
+import ru.araok.maskPhoneToNumberPhone
 import ru.araok.presentation.ViewModelFactory
 import java.time.LocalDate
 import java.util.Calendar
@@ -76,7 +78,7 @@ class RegistrationFragment: Fragment() {
 
             val user = UserDto(
                 name = binding.name.text.toString(),
-                phone = binding.phone.text?.toString()!!,
+                phone = maskPhoneToNumberPhone(binding.phone.text?.toString()!!),
                 password = binding.password.text.toString(),
                 birthDate = LocalDate.of(year, month, day),
                 role = "USER"
@@ -87,6 +89,10 @@ class RegistrationFragment: Fragment() {
 
         viewModel.registration.onEach {
             if(it.token.accessToken != null && it.token.refreshToken != null) {
+                Log.d("RegistrationFragment", "userId: ${it.user.id}")
+                Log.d("RegistrationFragment", "accessToken: ${it.token.accessToken!!}")
+                Log.d("RegistrationFragment", "refreshToken: ${it.token.refreshToken!!}")
+
                 Repository.saveUserId(requireContext(), it.user.id)
                 Repository.saveAccessToken(requireContext(), it.token.accessToken!!)
                 Repository.saveRefreshToken(requireContext(), it.token.refreshToken!!)

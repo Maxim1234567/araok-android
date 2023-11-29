@@ -73,4 +73,8 @@ class AraokRepository @Inject constructor() {
 
     suspend fun refreshToken(accessToken: String, refreshJwtRequest: RefreshJwtRequestDto) =
         RetrofitService.araokApi.refreshToken(BEARER + accessToken, refreshJwtRequest)
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun getUser(accessToken: String, id: Long) =
+        RetrofitService.araokApi.getUser(BEARER + accessToken, id).body() ?: UserDto()
 }

@@ -18,7 +18,7 @@ class AuthorizationResponseInterceptor: Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val response = chain.proceed(chain.request())
 
-        Log.d("AuthorizationResponseInterceptor", "intercept")
+        Log.d("AuthorizationResponseInterceptor", "intercept: ${response.code()}")
 
         if(response.code() == FORBIDDEN_CODE) {
             if(Repository.getAccessToken(App.getContext()).isEmpty()) {
@@ -28,6 +28,8 @@ class AuthorizationResponseInterceptor: Interceptor {
                 )
             } else {
                 runBlocking {
+                    Log.d("AuthorizationResponseInterceptor", "update access and refresh token")
+
                     withContext(Dispatchers.IO) {
                         val refreshToken = RefreshJwtRequestDto(
                             Repository.getRefreshToken(App.getContext())
@@ -39,6 +41,8 @@ class AuthorizationResponseInterceptor: Interceptor {
                         jwtResponse = RetrofitService.araokApi
                             .refreshToken("Bearer " + jwtResponse.accessToken, refreshToken).body()
                             ?: JwtResponseDto()
+
+                        Log.d("AuthorizationResponseInterceptor", "access: ${jwtResponse.accessToken}, refresh: ${jwtResponse.refreshToken}")
 
                         Repository.saveAccessToken(
                             context = App.getContext(),
