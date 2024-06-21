@@ -1,6 +1,7 @@
 package ru.araok.data
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import ru.araok.consts.TypeContent
 import ru.araok.data.dto.*
@@ -75,6 +76,6 @@ class AraokRepository @Inject constructor() {
         RetrofitService.araokApi.refreshToken(BEARER + accessToken, refreshJwtRequest)
 
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun getUser(accessToken: String, id: Long) =
-        RetrofitService.araokApi.getUser(BEARER + accessToken, id).body() ?: UserDto()
+    suspend fun getUser(accessToken: String) =
+        RetrofitService.araokApi.getUser(BEARER + accessToken).body() ?: UserDto()
 }

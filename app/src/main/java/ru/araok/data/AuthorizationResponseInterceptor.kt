@@ -35,6 +35,8 @@ class AuthorizationResponseInterceptor: Interceptor {
                             Repository.getRefreshToken(App.getContext())
                         )
 
+                        Log.d("AuthorizationResponseInterceptor", "refreshToken: ${refreshToken.refreshToken}")
+
                         var jwtResponse = RetrofitService.araokApi.accessToken(refreshToken).body()
                             ?: JwtResponseDto()
 

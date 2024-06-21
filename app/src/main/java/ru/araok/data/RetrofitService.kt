@@ -19,7 +19,7 @@ import ru.araok.data.dto.*
 import ru.araok.entites.JwtResponse
 import ru.araok.entites.RefreshJwtRequest
 
-const val BASE_URL = "http://10.0.2.2:8765"
+const val BASE_URL = "http://80.87.105.190:8765"
 
 object RetrofitService {
     private val adapter = Moshi.Builder()
@@ -130,10 +130,9 @@ object RetrofitService {
             @Body refreshJwtRequest: RefreshJwtRequestDto
         ): Response<JwtResponseDto>
 
-        @GET("/auth/user/{userId}")
+        @GET("/auth/user")
         suspend fun getUser(
-            @Header("Authorization") accessToken: String,
-            @Path("userId") id: Long
+            @Header("Authorization") accessToken: String
         ): Response<UserDto>
     }
 }

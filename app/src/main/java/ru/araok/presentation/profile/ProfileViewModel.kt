@@ -28,14 +28,14 @@ class ProfileViewModel @Inject constructor(
         initialValue = _user.value
     )
 
-    fun user(accessToken: String, userId: Long) {
+    fun user(accessToken: String) {
         viewModelScope.launch(Dispatchers.IO) {
             kotlin.runCatching {
-                Log.d("ProfileViewModel", "call user($accessToken, $userId)")
+                Log.d("ProfileViewModel", "call user($accessToken)")
 
-                getAraokUseCase.getUser(accessToken, userId)
+                getAraokUseCase.getUser(accessToken)
             }.fold(
-                onSuccess = { _user.value = it },
+                onSuccess = { _user.value = it; Log.d("ProfileViewModel", "name: ${it.name}") },
                 onFailure = { Log.d("ProfileViewModel", it.message ?: "") }
             )
         }

@@ -47,10 +47,22 @@
     </fragment>
 
     <fragment
+        android:id="@+id/speech_defects"
+        android:name="ru.araok.presentation.speechdefects.SpeechDefectsFragment"
+        android:label="@string/speech_defects"
+        tools:layout="@layout/fragment_speech_defects">
+
+    </fragment>
+
+    <fragment
         android:id="@+id/profile"
         android:name="ru.araok.presentation.profile.ProfileFragment"
         android:label="@string/profile"
         tools:layout="@layout/fragment_profile">
+
+<!--        <action-->
+<!--            android:id="@+id/profile_to_speech_defects"-->
+<!--            app:destination="@+id/speech_defects"/>-->
 
     </fragment>
 

@@ -39,7 +39,7 @@
         android:id="@+id/authorizeUser"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
+        android:visibility="visible"
         android:padding="8dp">
 
         <TextView
@@ -65,12 +65,30 @@
             tools:text="Дата рождения: 04.07.1995"/>
 
         <Button
-            android:id="@+id/exit"
+            android:id="@+id/instruction"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@+id/birthDate"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:text="Выйти"
+            android:text="@string/instruction"
+            />
+
+        <Button
+            android:id="@+id/speechDefects"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/instruction"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:text="@string/set_defects"
+            />
+
+        <Button
+            android:id="@+id/exit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/speechDefects"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:text="@string/exit"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

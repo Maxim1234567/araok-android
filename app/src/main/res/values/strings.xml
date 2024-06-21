@@ -27,11 +27,41 @@
     <string name="prefix_delay">Dl</string>
     <string name="add_new_mark">Add new mark</string>
     <string name="save">Save</string>
-    <string name="name">Имя</string>
-    <string name="phone_number">Номер телефона</string>
-    <string name="password">Пароль</string>
-    <string name="repeat_password">Повторите пароль</string>
-    <string name="registration">Зарегистрироваться</string>
-    <string name="enter">Войти</string>
-    <string name="entry">Войти</string>
+    <string name="name">Name</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="password">Password</string>
+    <string name="repeat_password">Repeat Password</string>
+    <string name="registration">Registration</string>
+    <string name="enter">Enter</string>
+    <string name="entry">Entry</string>
+    <string name="instruction">Instruction</string>
+    <string name="speech_defects">Speech Defects</string>
+    <string name="exit">Exit</string>
+    <string name="text">
+        instructions:<br/>
+            - dark theme does not work correctly - disable it, please<br/>
+            - if it freezes, re-login to your account<br/>
+    </string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="the_main_language_i_speak">The main language I speak</string>
+    <string name="extra_language_or_native">Extra language or native</string>
+    <string name="present_speech_defect_there_may_be_several">Present speech defect, there may be several:</string>
+    <string name="rhinolalia">Rhinolalia</string>
+    <string name="dysarthria">Dysarthria</string>
+    <string name="dysphonia">Dysphonia</string>
+    <string name="stuttering">Stuttering</string>
+    <string name="logoneurosis">Logoneurosis</string>
+    <string name="alalia">Alalia</string>
+    <string name="aphasia">Aphasia</string>
+    <string name="tahilalia">Tahilalia</string>
+    <string name="bradylalia">Bradylalia</string>
+    <string name="dyslalia_a_violation_of_sound_pronunciation_with_intact_hearing_and_intelligence">Dyslalia - a violation of sound pronunciation with intact hearing and intelligence:</string>
+    <string name="set_defects">Set Defects</string>
+    <string name="start">Start</string>
+    <string name="delete">Delete</string>
+    <string name="from_to">from/to</string>
+    <string name="cycles">Cycles</string>
+    <string name="subtitle">Subtitle</string>
+    <string name="speed">Speed</string>
 </resources>

@@ -36,10 +36,8 @@ class ProfileFragment: Fragment() {
         Log.d("RegistrationFragment", "getUserId: ${Repository.getUserId(requireContext())}")
         Log.d("RegistrationFragment", "bool: ${Repository.getAccessToken(requireContext()).isNotEmpty()}")
 
-        if(
-            Repository.getAccessToken(requireContext()).isNotEmpty() &&
-            Repository.getUserId(requireContext()) != 0L) {
-            viewModel.user(Repository.getAccessToken(requireContext()), Repository.getUserId(requireContext()))
+        if(Repository.getAccessToken(requireContext()).isNotEmpty()) {
+            viewModel.user(Repository.getAccessToken(requireContext()))
         }
     }
 
@@ -72,6 +70,10 @@ class ProfileFragment: Fragment() {
 
         binding.registration.setOnClickListener {
             findNavController().navigate(R.id.registration)
+        }
+
+        binding.speechDefects.setOnClickListener {
+            findNavController().navigate(R.id.speechDefects)
         }
 
         binding.exit.setOnClickListener {

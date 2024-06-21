@@ -17,7 +17,7 @@
 
     <item
         android:id="@+id/add_video"
-        android:icon="@drawable/add_video"
+        android:icon="@drawable/add"
         android:title="@string/add_video"/>
 
     <item

@@ -47,10 +47,10 @@ class AuthorizationFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.authorization.setOnClickListener {
-            Log.d("AuthorizationFragment", "phone: ${binding.phone.text}")
-            Log.d("AuthorizationFragment", "password: ${binding.password.text}")
-
             val phoneNumber = maskPhoneToNumberPhone(binding.phone.text?.toString()!!)
+
+            Log.d("AuthorizationFragment", "phone: $phoneNumber")
+            Log.d("AuthorizationFragment", "password: ${binding.password.text}")
 
             val jwtRequest = JwtRequestDto(
                 phone = phoneNumber,

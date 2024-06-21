@@ -7,14 +7,11 @@
     android:layout_height="wrap_content"
     android:padding="8dp">
 
-    <TextView
+    <Button
         android:id="@+id/language"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:text="Language"
-        android:textSize="20sp"
-        android:textColor="@color/black"
-        android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
